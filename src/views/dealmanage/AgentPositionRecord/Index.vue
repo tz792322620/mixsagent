@@ -108,12 +108,12 @@
       </template>
       <span slot="action" slot-scope="text, record">
           <!-- <a @click="handleEdit">编辑</a> -->
-          <a class="table-handle-btn"  @click="visible = true">详情</a>
+          <a class="table-handle-btn"  @click="xq(record)">详情</a>
           <a-dropdown v-if="false">
             <a class="ant-dropdown-link table-handle-btn">更多 <a-icon type="down" /></a>
             <a-menu slot="overlay">
               <a-menu-item>
-                <a @click="visible = true">详情</a>
+                <a @click="xq(record)">详情</a>
               </a-menu-item>
               <!-- <a-menu-item>
                 <a @click="handleDel">删除</a>
@@ -129,39 +129,28 @@
       <ul class="des-list">
         <li class="des-item">
           <span class="des-item-title">订单编号：</span>
-          <span class="des-item-data">5724179565769986048</span>
+          <span class="des-item-data">{{xqxx.id}}</span>
         </li>
         <li class="des-item">
           <span class="des-item-title">交易时间：</span>
-          <span class="des-item-data">2022-05-11  19:00：35</span>
+          <span class="des-item-data">{{ xqxx.createTime }}</span>
         </li>
         <li class="des-item">
-          <span class="des-item-title">类型：</span>
-          <span class="des-item-data"></span>
+          <span class="des-item-title">逐仓/全仓：</span>
+          <span class="des-item-data">{{ xqxx.depotType }}</span>
         </li>
         <li class="des-item">
           <span class="des-item-title">开仓价格(USDT)：</span>
-          <span class="des-item-data">100</span>
+          <span class="des-item-data">{{ xqxx.openDepotPrice }}</span>
         </li>
         <li class="des-item">
-          <span class="des-item-title">持仓收益(USDT)：</span>
-          <span class="des-item-data">100</span>
+          <span class="des-item-title">合约品种：</span>
+          <span class="des-item-data">{{ xqxx.virtualCoinPairName }}</span>
         </li>
-        <li class="des-item">
-          <span class="des-item-title">持仓数量(BTC)：</span>
-          <span class="des-item-data">72.00</span>
-        </li>
-        <li class="des-item">
-          <span class="des-item-title">保证金率(%):</span>
-          <span class="des-item-data main-color">78.15</span>
-        </li>
-        <li class="des-item">
-          <span class="des-item-title">订单状态：</span>
-          <span class="des-item-data">已结算</span>
-        </li>
+
         <li class="des-item">
           <span class="des-item-title">下单时间：</span>
-          <span class="des-item-data">2022-05-11  19:00：35</span>
+          <span class="des-item-data">{{ xqxx.createTime }}</span>
         </li>
       </ul>
     </a-modal>
@@ -286,6 +275,7 @@ export default {
   },
   data() {
     return {
+      xqxx:{},
       bidui:[],
       searchForm:{},
       columns,
@@ -304,6 +294,10 @@ export default {
 
   },
   methods: {
+    xq(e){
+      this.xqxx = e
+      this.visible = true
+    },
     handleChange(item){
       console.log(item)
     },
