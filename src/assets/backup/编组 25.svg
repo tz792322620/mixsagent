@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100px" height="40px" viewBox="0 0 100 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 25</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="100" height="40" rx="3"></rect>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="组件" transform="translate(-735.000000, -261.000000)">
+            <g id="编组-25" transform="translate(735.000000, 261.000000)">
+                <rect id="矩形备份-43" stroke="#49B1B3" x="0.5" y="0.5" width="99" height="39" rx="3"></rect>
+                <g id="三角形">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <g id="蒙版"></g>
+                    <polygon fill="#49B1B3" mask="url(#mask-2)" transform="translate(92.757457, 33.007457) scale(1, -1) rotate(45.000000) translate(-92.757457, -33.007457) " points="94.0149134 22 113.514913 41.5 72 44.0149134"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,189 @@
+
+/*列表上方操作按钮区域*/
+.ant-card-body .table-operator {
+  margin-bottom: 8px;
+}
+/** Button按钮间距 */
+.table-operator .ant-btn {
+  margin: 0 8px 8px 0;
+}
+.table-operator .ant-btn-group .ant-btn {
+  margin: 0;
+}
+
+.table-operator .ant-btn-group .ant-btn:last-child {
+  margin: 0 8px 8px 0;
+}
+/*列表td的padding设置 可以控制列表大小*/
+.ant-table-tbody .ant-table-row td {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+/*列表页面弹出modal*/
+.ant-modal-cust-warp {
+  height: 100%
+}
+
+/*弹出modal Y轴滚动条*/
+.ant-modal-cust-warp .ant-modal-body {
+  height: calc(100% - 110px) !important;
+  overflow-y: auto
+}
+
+/*弹出modal 先有content后有body 故滚动条控制在body上*/
+.ant-modal-cust-warp .ant-modal-content {
+  height: 90% !important;
+  overflow-y: hidden
+}
+/*列表中有图片的加这个样式 参考用户管理*/
+.anty-img-wrap {
+  height: 25px;
+  position: relative;
+}
+.anty-img-wrap > img {
+  max-height: 100%;
+}
+/*列表中范围查询样式*/
+.query-group-cust{width: calc(50% - 10px)}
+.query-group-split-cust:before{content:"~";width: 20px;display: inline-block;text-align: center}
+
+
+/*erp风格子表外框padding设置*/
+.ant-card-wider-padding.cust-erp-sub-tab>.ant-card-body{padding:5px 12px}
+
+/* 内嵌子表背景颜色 */
+.j-inner-table-wrapper /deep/ .ant-table-expanded-row .ant-table-wrapper .ant-table-tbody .ant-table-row {
+  background-color: #FFFFFF;
+}
+
+/**隐藏样式-modal确定按钮 */
+.jee-hidden{display: none}
+
+
+
+/* flex布局 */
+
+.d-flex {
+  display: flex;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-space-between {
+  justify-content: space-between;
+}
+
+.justify-space-around {
+  justify-content: space-around;
+}
+
+.main-color{
+  color: #49B1B3 !important;
+}
+.search-label{
+  color: #666666;
+  font-weight: 600;
+}
+.canc-btn{ 
+  width: 170px;
+  height: 40px;
+  border-radius: 3px;
+  border: 1px solid #49B1B3;
+  color: #49B1B3;
+  font-size: 16px;
+}
+.sub-btn{ 
+  width: 170px;
+  height: 40px;
+  background: #49B1B3;
+  border-radius: 3px;
+  color: #fff;
+  font-size: 16px;
+}
+
+.handle-btn{
+  border: 2px solid #49B1B3;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.float-search-btn{
+  position: absolute;
+  right: 64px;
+}
+
+.search-btn-circle{
+  border-radius: 20px;
+}
+
+.clear-btn-circle{
+  border-radius: 20px;
+  color: #4bb1b1;
+  font-weight: 500;
+  border: 2px solid #4bb1b1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #337e7c;
+  border-radius: 2px;
+}
+
+.table-handle-btn{
+  background: #49B1B3;
+  border-radius: 5px;
+  color: #fff;
+  padding: 3px 6px;
+  margin: 0 8px;
+
+  &:hover{
+    color: #fff !important;
+  }
+}
+
+.title-top{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .btn{
+    background: #49b1b3;
+    color: #fff;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    i{
+      margin-right: 4px;
+      transform: rotate(290deg);
+    }
+  }
+ 
+}
+
+.detail-input-border.ant-input{
+  border: 1px solid #49B1B3;
+}
+
+.ant-alert.ant-alert-info{
+  display: none;
+}
+.j-table-force-nowrap{
+  margin-top: 20px;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.py-3 {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.py-4 {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+
