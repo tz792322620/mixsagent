@@ -62,7 +62,7 @@
               placeholder="请输入真实姓名"
               class="detail-input-border"
               v-model="detailsForm.name"
-              default-value="26888888"
+              default-value=""
               :disabled="true"
             />
           </a-form-item>
@@ -79,7 +79,7 @@
               placeholder="请输入邮箱"
               class="detail-input-border"
               v-model="detailsForm.email"
-              default-value="26888888"
+              default-value=""
               :disabled="true"
             />
           </a-form-item>
@@ -87,7 +87,7 @@
             <a-input
               placeholder="请输入创建时间"
               class="detail-input-border"
-              default-value="26888888"
+              default-value=""
               v-model="detailsForm.createTime"
               :disabled="true"
             />
@@ -96,7 +96,7 @@
             <a-input
               placeholder="请输入上级编号"
               class="detail-input-border"
-              default-value="26888888"
+              default-value=""
               v-model="detailsForm.agentId"
               :disabled="true"
             />
@@ -105,7 +105,7 @@
             <a-input
               placeholder="请输入上级等级"
               class="detail-input-border"
-              default-value="26888888"
+              default-value=""
               v-model="detailsForm.type"
               :disabled="true"
             />
@@ -114,7 +114,7 @@
             <a-input
               placeholder="请输入提现金额"
               class="detail-input-border"
-              default-value="26888888"
+              default-value=""
               v-model="detailsForm.amount"
               :disabled="true"
             />
@@ -123,7 +123,7 @@
             <a-input
               placeholder="请输入上级编号"
               class="detail-input-border"
-              default-value="26888888"
+              default-value=""
               v-model="detailsForm.parentId"
               :disabled="true"
             />
@@ -132,7 +132,7 @@
             <a-input
               placeholder="请输入提币地址"
               class="detail-input-border"
-              default-value="26888888"
+              default-value=""
               v-model="detailsForm.virtualAddress"
               :disabled="true"
             />

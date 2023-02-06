@@ -8,9 +8,7 @@
         <div class="btn" @click="handleRefe"><a-icon type="redo" />刷新</div>
     </div>
 
-
     <!-- 查询区域 -->
-
 
     <div style="margin-bottom: 30px">
       <a-form :form="searchForm" :label-col="{ span: 6 }" :wrapper-col="{ span: 8 }">
@@ -314,6 +312,13 @@ export default {
           dataIndex: 'type',
           key: 'type',
           scopedSlots: { customRender: 'type' },
+        },
+        {
+          title: '创建时间',
+          align: 'center',
+          dataIndex: 'createTime',
+          key: 'createTime',
+          scopedSlots: { customRender: 'createTime' }
         },
         {
           title: '操作',

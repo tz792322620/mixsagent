@@ -3,6 +3,7 @@
     <div class="card  pa-6" v-if="showType == 'list'" :bordered="false">
       <!-- 查询区域 -->
       <div v-if="false">
+
         <div class="table-page-search-wrapper">
           <a-form layout="inline" @keyup.enter.native="searchQuery">
             <a-row :gutter="24"> </a-row>
@@ -413,6 +414,13 @@ export default {
           key: 'status',
           scopedSlots: { customRender: 'status' }
         },
+        {
+          title: '创建时间',
+          align: 'center',
+          dataIndex: 'createTime',
+          key: 'createTime',
+          scopedSlots: { customRender: 'createTime' }
+        },
         // {
         //   title:'uuid',
         //   align:"center",
@@ -553,7 +561,6 @@ export default {
         console.log("数据",res);
         if(res.success) {
           this.yhxx = res.result;
-
         }
       }).catch(err =>{
         console.log(err);
@@ -661,7 +668,7 @@ export default {
       this.visible = true
       // debugger
     },
-    //提交代理申请
+    //设置代理
     submitAuth() {
       console.log(this.agentsForm)
       this.agentsForm.rate = this.agentsForm.rate * 0.01

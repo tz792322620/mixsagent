@@ -94,6 +94,18 @@
         <template slot="htmlSlot" slot-scope="text">
           <div v-html="text"></div>
         </template>
+        <template slot="tradingStatus" slot-scope="tradingStatus">
+          <div :key="tradingStatus">
+            <span v-if="tradingStatus == 0">正常</span>
+            <span v-if="tradingStatus == 1">冻结</span>
+          </div>
+        </template>
+        <template slot="status" slot-scope="status">
+          <div :key="status">
+            <span v-if="status == 0">正常</span>
+            <span v-if="status == 1">停用</span>
+          </div>
+        </template>
         <template slot="imgSlot" slot-scope="text, record">
           <span v-if="!text" style="font-size: 12px; font-style: italic">无图片</span>
           <img
@@ -120,7 +132,7 @@
                <!-- <a-menu-item>
                 <a @click="editModel = true">编辑</a>
               </a-menu-item> -->
-              <a-menu-item>
+              <a-menu-item v-if="record.tradingStatus == 0">
                 <a  @click="jzjy(record)">禁止交易</a>
               </a-menu-item>
               <a-menu-item>
@@ -194,6 +206,7 @@ export default {
           align: 'center',
           dataIndex: 'name',
         },
+
         {
           title: '密码',
           align: 'center',
@@ -228,6 +241,23 @@ export default {
           title: '邮箱',
           align: 'center',
           dataIndex: 'email',
+        },
+        {
+          title: '创建时间',
+          align: 'center',
+          dataIndex: 'createTime',
+        },
+        {
+          title: '交易状态',
+          align: 'center',
+          dataIndex: 'tradingStatus',
+          scopedSlots: { customRender: 'tradingStatus' },
+        },
+        {
+          title: '状态',
+          align: 'center',
+          dataIndex: 'status',
+          scopedSlots: { customRender: 'status' },
         },
         {
           title: '操作',
@@ -305,7 +335,7 @@ export default {
       let id = record.userId
       postActions('/userlist/userList/disableAgent',{id:id})
         .then(res => {
-          console.log('禁止交易', res)
+          console.log('解绑代理', res)
           if (res.success) {
             this.$notification.success({
               message: '提示',

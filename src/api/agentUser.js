@@ -31,7 +31,7 @@ export function updateAgentUserInfo(data) {
 // 持仓记录列表
 export function getPositionRecord(params) {
   return axios({
-    url: '/agentuser/agentUser/depot',
+    url: '/business/userOrder/closeHoldingList',
     method: 'get',
     params: params
   })
@@ -45,7 +45,7 @@ export function getAgentFinance() {
   })
 }
 
-//提款申请 
+//提款申请
 export function addApply(data) {
   return axios({
     url: '/agentuser/agentUser/apply',
@@ -54,7 +54,7 @@ export function addApply(data) {
   })
 }
 
-//提款信息 
+//提款信息
 export function getApplyInfo(id) {
   return axios({
     url: '/agentuser/agentUser/applyInfo',
@@ -65,7 +65,7 @@ export function getApplyInfo(id) {
   })
 }
 
-// 财务报表 
+// 财务报表
 export function getAgentUserFinance(id) {
   return axios({
     url: '/agentuser/agentUser/finance',

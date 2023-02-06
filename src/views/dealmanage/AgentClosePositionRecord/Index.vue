@@ -329,7 +329,7 @@ export default {
       this.visible =false
     },
     getListbd() {
-      getAction('/contract/getContractBoxList')
+      getAction('/business/userOrder/openHoldingList')
         .then(res => {
           this.bidui = res.result
           console.log(this.bidui)
@@ -339,7 +339,7 @@ export default {
     getList(searchQuery) {
       this.loading = true
       // debugger
-      getAction('/agentuser/agentUser/depot', Object.assign(this.pageQuery, searchQuery))
+      getAction('/business/userOrder/closeHoldingList', Object.assign(this.pageQuery, searchQuery))
         .then(res => {
           console.log(res);
           if (res.success) {
