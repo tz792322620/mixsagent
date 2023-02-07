@@ -22,6 +22,26 @@
 
             <div class="d-flex">
               <div class="d-flex align-center">
+                <a-form-item label="委托状态:">
+                  <a-select
+                    placeholder="全部"
+                    v-model="searchForm.orderStatus" style="width: 220px">
+                    <a-select-option value="CANCEL">
+                      已撤销
+                    </a-select-option>
+                    <a-select-option value="DEALED">
+                      已成交
+                    </a-select-option>
+                    <a-select-option value="WAIT">
+                      已委托
+                    </a-select-option>
+                  </a-select>
+                </a-form-item>
+              </div>
+            </div>
+
+            <div class="d-flex">
+              <div class="d-flex align-center">
                 <a-form-item label="逐仓/全仓:">
                   <a-select
                     placeholder="全部"
@@ -62,9 +82,9 @@
               <a-form-item label="合约品种:">
                 <a-select
                   placeholder="全部"
-                  v-model="searchForm.contractId" style="width: 220px">
-                  <a-select-option v-for="(item, index) in bidui" :value="item.virtualCoinPairId" :key="index">
-                    {{ item.virtualCoinPairName }}
+                  v-model="searchForm.contractNo" style="width: 220px">
+                  <a-select-option v-for="(item, index) in bidui" :value="item.contract_no" :key="index">
+                    {{ item.display_name }}
                   </a-select-option>
 
                 </a-select>
@@ -75,9 +95,11 @@
 
             <div class=" d-flex align-center">
               <a-form-item label="成交时间">
-                <a-range-picker
-                  v-model="searchForm.createTime"
-                />
+<!--                <a-range-picker-->
+<!--                  format="YYYY-MM-DD HH:mm:ss"-->
+<!--                  v-model="searchForm.createTime"-->
+<!--                />-->
+                <a-range-picker @change="onChange"  format="YYYY-MM-DD HH:mm:ss" v-model="timeEl"/>
               </a-form-item>
             </div>
             <div class="px-6"></div>
@@ -129,7 +151,7 @@
       <ul class="des-list">
         <li class="des-item">
           <span class="des-item-title">订单编号：</span>
-          <span class="des-item-data">{{xqxx.id}}</span>
+          <span class="des-item-data">{{xqxx.orderSn}}</span>
         </li>
         <li class="des-item">
           <span class="des-item-title">交易时间：</span>
@@ -145,12 +167,12 @@
         </li>
         <li class="des-item">
           <span class="des-item-title">合约品种：</span>
-          <span class="des-item-data">{{ xqxx.virtualCoinPairName }}</span>
+          <span class="des-item-data">{{ xqxx.displayName }}</span>
         </li>
 
         <li class="des-item">
           <span class="des-item-title">下单时间：</span>
-          <span class="des-item-data">{{ xqxx.createTime }}</span>
+          <span class="des-item-data">{{ xqxx.createdDate }}</span>
         </li>
       </ul>
     </a-modal>
@@ -177,8 +199,8 @@ const columns = [
   {
     align: 'center',
     title: '合约品种',
-    dataIndex: 'virtualCoinPairName',
-    key: 'virtualCoinPairName',
+    dataIndex: 'displayName',
+    key: 'displayName',
 
   },
   {
@@ -200,8 +222,8 @@ const columns = [
   {
     align: 'center',
     title: '杠杆倍数',
-    dataIndex: 'multiple',
-    key: 'multiple'
+    dataIndex: 'lever',
+    key: 'lever'
   },
   // {
   //   title: '未结算盈亏',
@@ -258,8 +280,15 @@ const columns = [
   {
     align: 'center',
     title: '仓位创建时间',
-    dataIndex: 'createTime',
-    key: 'createTime',
+    dataIndex: 'createdDate',
+    key: 'createdDate',
+
+  },
+  {
+    align: 'center',
+    title: '委托状态',
+    dataIndex: 'orderStatus',
+    key: 'orderStatus',
 
   },
   {
@@ -275,6 +304,10 @@ export default {
   },
   data() {
     return {
+      startTime:'',
+      endTime:'',
+      timeEl:[],
+      allowClear:false,
       xqxx:{},
       bidui:[],
       searchForm:{},
@@ -298,6 +331,12 @@ export default {
       this.xqxx = e
       this.visible = true
     },
+    onChange(date, dateString) {
+      this.searchForm.startTime = dateString[0];
+      this.searchForm.endTime = dateString[1];
+
+      console.log(this.searchForm);
+    },
     handleChange(item){
       console.log(item)
     },
@@ -315,7 +354,7 @@ export default {
       this.visible =false
     },
     getListbd() {
-      getAction('/business/userOrder/openHoldingList')
+      getAction('/business/contract/getContractBoxList')
         .then(res => {
           this.bidui = res.result
           console.log(this.bidui)

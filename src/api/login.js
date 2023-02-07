@@ -31,8 +31,8 @@ export function phoneLogin(parameter) {
 export function getSmsCaptcha(phoneOrMail,type,code) {
   return axios({
     url: '/sys/sendCaptcha',
-    method: 'get',
-    params: {
+    method: 'post',
+    data: {
       phoneOrMail,
       type,
       code

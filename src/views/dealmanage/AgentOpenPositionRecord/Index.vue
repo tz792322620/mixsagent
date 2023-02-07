@@ -61,9 +61,9 @@
               <a-form-item label="合约品种:">
                 <a-select
                   placeholder="全部"
-                  v-model="searchForm.contractId" style="width: 220px">
-                  <a-select-option v-for="(item, index) in bidui" :value="item.virtualCoinPairId" :key="index">
-                    {{ item.virtualCoinPairName }}
+                  v-model="searchForm.contractNo" style="width: 220px">
+                  <a-select-option v-for="(item, index) in bidui" :value="item.contract_no" :key="index">
+                    {{ item.display_name }}
                   </a-select-option>
 
                 </a-select>
@@ -74,9 +74,10 @@
 
             <div class=" d-flex align-center">
               <a-form-item label="成交时间">
-                <a-range-picker
-                  v-model="searchForm.createTime"
-                />
+<!--                <a-range-picker-->
+<!--                  v-model="searchForm.createdDate"-->
+<!--                />-->
+                <a-range-picker @change="onChange"  format="YYYY-MM-DD HH:mm:ss" v-model="timeEl"/>
               </a-form-item>
             </div>
             <div class="px-6"></div>
@@ -197,8 +198,8 @@ const columns = [
   },
   {
     title: '合约品种',
-    dataIndex: 'virtualCoinPairName',
-    key: 'virtualCoinPairName',
+    dataIndex: 'displayName',
+    key: 'displayName',
 
   },
   {
@@ -234,15 +235,15 @@ const columns = [
   // },
   {
     title: '成交价值(USDT)',
-    dataIndex: 'tradeStatus',
-    key: 'tradeStatus',
+    dataIndex: 'orderPrice',
+    key: 'orderPrice',
 
     scopedSlots: { customRender: 'tradeStatus' }
   },
   {
     title: '杠杆倍数',
-    dataIndex: 'multiple',
-    key: 'multiple',
+    dataIndex: 'lever',
+    key: 'lever',
 
   },
   {
@@ -253,8 +254,8 @@ const columns = [
   },
   {
     title: '成交时间',
-    dataIndex: 'createTime',
-    key: 'createTime',
+    dataIndex: 'createdDate',
+    key: 'createdDate',
 
   },
 //   {
@@ -295,6 +296,10 @@ export default {
   },
   data() {
     return {
+      startTime:'',
+      endTime:'',
+      timeEl:[],
+      allowClear:false,
       bidui:[],
       searchForm:{},
       columns,
@@ -316,9 +321,15 @@ export default {
     handleChange(item){
       console.log(item)
     },
+    onChange(date, dateString) {
+      this.searchForm.startTime = dateString[0];
+      this.searchForm.endTime = dateString[1];
+
+      console.log(this.searchForm);
+    },
     // 查询列表数据
      getListbd() {
-      getAction('/business/userOrder/openHoldingList')
+      getAction('/business/contract/getContractBoxList')
         .then(res => {
           this.bidui = res.result
           // console.log(this.bidui)
