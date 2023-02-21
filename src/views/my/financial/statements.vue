@@ -5,83 +5,94 @@
       <div class="title-top">
         <div class="font-size-30 font-bold">财务报表</div>
         <div class="btn" @click="getPageData()"><a-icon type="redo"  />刷新</div>
-    </div>
-
-      <div class="d-flex mt-6">
-        <div class="d-flex">
-          <div class=" d-flex align-center">
-            <div class="min-width-80px">统计时间 : </div>
-<!--            <a-range-picker style="width: 220px"></a-range-picker>-->
-            <a-range-picker style="width: 220px" @change="onChange"  format="YYYY-MM-DD HH:mm:ss" v-model="timeEl"/>
-          </div>
-        </div>
-        <div class="px-6"></div>
-        <div>
-          <a-button class="mr-6 search-btn-circle" type="primary" @click="search">筛选</a-button>
-          <a-button class="clear-btn-circle" @click="clear">重置</a-button>
-        </div>
       </div>
+<!--      <ul style="height: 100px;">-->
+<!--        <li v-for="item in baseInfoList" :key="item.value" class="py-4 base-info-box">-->
 
-      <div class="d-flex justify-space-between flex-wrap">
-          <div class="d-flex" style="min-width: 30%;">
-            <div class="pa-4 e8e8e8-border-color mt-7" style="width: 100%; height: 150px">
-              <div class="d-flex justify-space-between align-center">
-                <div class="font-size-22 color-666">存款</div>
-<!--                <div class="primary-color cursor"  @click="() => (modal2Visible = true)">查看详情</div>-->
+<!--          <div>-->
+<!--            <span class="base-info-desc" >{{item.text}}</span> :&nbsp;<span class="base-info-data">{{ agentUserInfo[item.value] }}</span>-->
+<!--          </div>-->
+
+<!--        </li>-->
+<!--      </ul>-->
+
+
+<!--      <div class="card" style="margin-top: 30px;">-->
+<!--        <div class="baseInfo-card-title d-flex align-center">-->
+<!--          &nbsp;资产信息-->
+<!--        </div>-->
+<!--        <a-table-->
+<!--          :dataSource="agentUserUserVirtualWallet"-->
+<!--          :columns="virtualWalletColumnss"-->
+<!--          :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)"-->
+<!--          class="ant-table-striped"-->
+<!--          :pagination="false"-->
+<!--          bordered-->
+<!--        />-->
+<!--      </div>-->
+            <div class="card" style="margin-top: 30px;">
+              <div class="baseInfo-card-title d-flex align-center">
+                &nbsp;返佣信息
               </div>
-              <div class="font-bold font-size-24 mt-5">{{form.balance}}</div>
-            </div>
-          </div>
-
-          <div class="d-flex" style="min-width: 30%;">
-            <div class="pa-4 e8e8e8-border-color mt-7" style="width: 100%; height: 150px">
-              <div class="d-flex justify-space-between align-center">
-                <div class="font-size-22 color-666">提款</div>
+              <div style="display: flex;justify-content: space-between;">
+                <a-card title="我的返佣" style="width: 45%">
+                  <a slot="extra" href="#">0</a>
+                  <div style="display: flex;justify-content: space-between;">
+                    <div>已结算:100</div>
+                    <div>未结算:100</div>
+                  </div>
+                </a-card>
+                <a-card title="下级代理总返佣" style="width: 45%">
+                  <a slot="extra" href="#">0</a>
+                  <div style="display: flex;justify-content: space-between;">
+                    <div>已结算:100</div>
+                    <div>未结算:100</div>
+                  </div>
+                </a-card>
               </div>
-              <div class="font-bold font-size-24 mt-5">{{form.totalAmount}}</div>
-            </div>
-          </div>
 
-          <div class="d-flex" style="min-width: 30%;">
-            <div class="pa-4 e8e8e8-border-color mt-7" style="width: 100%; height: 150px">
-              <div class="d-flex justify-space-between align-center">
-                <div class="font-size-22 color-666">净输赢</div>
+              <div style="display: flex;justify-content: space-between;margin-top: 20px;">
+                <a-card title="直接用户" style="width: 45%">
+                  <a slot="extra" href="#">0</a>
+                  <div style="display: flex;justify-content: space-between;">
+                    <div>总盈亏:100</div>
+                    <div>未实现盈亏:100</div>
+                  </div>
+                  <div style="display: flex;justify-content: space-between;margin-top: 10px;">
+                    <div>现持仓:100</div>
+                    <div>总手续费:100</div>
+                  </div>
+                </a-card>
+                <a-card title="下级代理的用户" style="width: 45%">
+                  <a slot="extra" href="#">0</a>
+                  <div style="display: flex;justify-content: space-between;">
+                    <div>总盈亏:100</div>
+                    <div>未实现盈亏:100</div>
+                  </div>
+                  <div style="display: flex;justify-content: space-between; margin-top: 10px;">
+                    <div>现持仓:100</div>
+                    <div>总手续费:100</div>
+                  </div>
+                </a-card>
               </div>
-              <div class="font-bold font-size-24 mt-5">{{form.profit}}</div>
             </div>
-          </div>
-
-          <div class="d-flex" style="min-width: 30%;">
-            <div class="pa-4 e8e8e8-border-color mt-7" style="width: 100%; height: 150px">
-              <div class="d-flex justify-space-between align-center">
-                <div class="font-size-22 color-666">手续费</div>
-<!--                <div class="primary-color cursor" @click="() => (modal2Visible = true)">查看详情</div>-->
-              </div>
-              <div class="font-bold font-size-24 mt-5">{{form.charge}}</div>
-            </div>
-          </div>
-
-
-      </div>
-      <div class="red-color mt-7 font-size-16 opacity-85">提示：总输赢，净输赢中正数表示公司盈利，负数表示公司亏损，每天数据之作普通参考，并不做实际佣金派发标准。</div>
-      <!-- <DepositDialog :show=""></DepositDialog> -->
 
 
     </div>
     <!-- 存款详情弹框 -->
-    <a-modal
-      v-model="modal2Visible"
-      title="手续费"
-      centered
-      :footer="null"
-      @ok="() => (modal2Visible = false)"
-    >
-    <a-table :columns="columns" :data-source="data" class="mt-4">
-        <span slot="action" slot-scope="text, record">
-          <a-button>编辑</a-button>
-        </span>
-      </a-table>
-    </a-modal>
+<!--    <a-modal-->
+<!--      v-model="modal2Visible"-->
+<!--      title="手续费"-->
+<!--      centered-->
+<!--      :footer="null"-->
+<!--      @ok="() => (modal2Visible = false)"-->
+<!--    >-->
+<!--    <a-table :columns="columns" :data-source="data" class="mt-4">-->
+<!--        <span slot="action" slot-scope="text, record">-->
+<!--          <a-button>编辑</a-button>-->
+<!--        </span>-->
+<!--      </a-table>-->
+<!--    </a-modal>-->
 
   </div>
 
@@ -124,6 +135,18 @@ import { httpAction, getAction } from '@/api/manage'
 export default {
   data(){
     return {
+      subordinateAgentSummary:[],
+      baseInfoList: [
+        // { text: '代理商账户', value: 'phone' },
+        { text: '提币地址', value: 'address' },
+        { text: '用户ID', value: 'id' },
+        { text: '真实姓名', value: 'name' },
+        { text: '手机号', value: 'phone' },
+        { text: '邮箱', value: 'email' },
+        { text: '注册时间', value: 'createTime' },
+        { text: '最近登陆时间', value: 'lastLoginTime' },
+
+      ],
       modal2Visible: false,
       columns,
       data,
@@ -179,7 +202,59 @@ export default {
 </script>
 
 <style lang="less">
+a {
+  color: #49b1b3;
+}
+li{
+  list-style: none;
+  padding: 0;
+  margin: 6px 0;
+  float: left;
+  display: block;
+  width: 25%;
+}
 
+.card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.baseInfo-card-title {
+  font-weight: 600;
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: black;
+  opacity: 0.75;
+}
+
+.d-flex{
+  display: flex;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.base-info-box {
+  font-size: 16px;
+}
+.ant-col-6 {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/*.base-info-box .base-info-desc {*/
+/*  opacity: .85;*/
+/*}*/
+.base-info-box .base-info-data {
+  font-weight: bold;
+}
+
+.ant-table-striped /deep/ .table-striped td {
+  background-color: #fafafa;
+}
 .opacity-85 {
   opacity: .65;
 }
@@ -221,5 +296,8 @@ export default {
   .ant-modal-footer{
     display: none;
   }
+}
+/deep/.a {
+  color: #49b1b3;
 }
 </style>
