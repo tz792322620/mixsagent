@@ -118,7 +118,7 @@
           <template slot="type" slot-scope="type">
             <div :key="type">
               <span v-if="type == 0">普通用户</span>
-              <span v-if="type == 1">商户</span>
+              <span v-if="type == 1">代理商</span>
             </div>
           </template>
           <template slot="loginIs" slot-scope="loginIs">
@@ -132,9 +132,9 @@
             <div :key="authorizeLevel">
               <span v-if="authorizeLevel == 0">未认证</span>
               <span v-if="authorizeLevel == 1">基本信息认证</span>
-              <span v-if="authorizeLevel == 0">审核中</span>
-              <span v-if="authorizeLevel == 0">已认证</span>
-              <span v-if="authorizeLevel == 0">不通过</span>
+              <span v-if="authorizeLevel == 2">审核中</span>
+              <span v-if="authorizeLevel == 3">已认证</span>
+              <span v-if="authorizeLevel == 4">不通过</span>
             </div>
           </template>
 
@@ -210,13 +210,7 @@
             </a-select>
           </a-form-item>
           <a-form-item label="佣金比例">
-            <a-input v-model.number="agentsForm.rate" placeholder="请输入分佣比(%)" />
-          </a-form-item>
-          <a-form-item label="结算类型">
-            <a-select style="width: 100%" v-model:value="agentsForm.tradeType" placeholder="请选择结算类型（D/T）">
-              <a-select-option value="0">D</a-select-option>
-              <a-select-option value="1">T</a-select-option>
-            </a-select>
+            <a-input v-model.number="agentsForm.rate" placeholder="请输入分佣比(%)" suffix="%"/>
           </a-form-item>
           <a-form-item label="结算时间">
             <a-select
@@ -224,11 +218,18 @@
               v-model:value="agentsForm.settlementCycle"
               placeholder="请选择结算类型（D/T）"
             >
-              <a-select-option value="0">日结</a-select-option>
-              <a-select-option value="1">周结</a-select-option>
-              <a-select-option value="2">月结</a-select-option>
+              <a-select-option value="0" v-if="yhxx.settlementCycle <= 1">日结</a-select-option>
+              <a-select-option value="1" v-if="yhxx.settlementCycle <= 2">周结</a-select-option>
+              <a-select-option value="2" v-if="yhxx.settlementCycle <= 3">月结</a-select-option>
             </a-select>
           </a-form-item>
+          <a-form-item label="结算类型">
+            <a-select style="width: 100%" v-model:value="agentsForm.tradeType" placeholder="请选择结算类型（D/T）">
+              <a-select-option value="0">D(工作日+节假日)</a-select-option>
+              <a-select-option value="1">T(工作日)</a-select-option>
+            </a-select>
+          </a-form-item>
+
         </a-form>
         <div class="d-flex justify-space-around">
           <a-button class="canc-btn" @click="cancelAuth">取消</a-button>
@@ -320,6 +321,11 @@ export default {
       // 表头
       columns: [
         {
+          title: 'uuid',
+          align: 'center',
+          dataIndex: 'uuid'
+        },
+        {
           title: '用户名',
           align: 'center',
           dataIndex: 'userName'
@@ -385,6 +391,13 @@ export default {
           dataIndex: 'type',
           key: 'type',
           scopedSlots: { customRender: 'type' }
+        },
+        {
+          title: '代理等级',
+          align: 'center',
+          dataIndex: 'level',
+          key: 'level',
+          scopedSlots: { customRender: 'level' }
         },
         {
           title: '是否允许登录',

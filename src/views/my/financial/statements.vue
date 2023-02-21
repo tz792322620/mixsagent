@@ -11,13 +11,14 @@
         <div class="d-flex">
           <div class=" d-flex align-center">
             <div class="min-width-80px">统计时间 : </div>
-            <a-range-picker style="width: 220px"></a-range-picker>
+<!--            <a-range-picker style="width: 220px"></a-range-picker>-->
+            <a-range-picker style="width: 220px" @change="onChange"  format="YYYY-MM-DD HH:mm:ss" v-model="timeEl"/>
           </div>
         </div>
         <div class="px-6"></div>
         <div>
-          <a-button class="mr-6 search-btn-circle" type="primary">筛选</a-button>
-          <a-button class="clear-btn-circle">重置</a-button>
+          <a-button class="mr-6 search-btn-circle" type="primary" @click="search">筛选</a-button>
+          <a-button class="clear-btn-circle" @click="clear">重置</a-button>
         </div>
       </div>
 
@@ -126,6 +127,8 @@ export default {
       modal2Visible: false,
       columns,
       data,
+      timeEl:[],
+      searchForm:{},
       form: {
         totalAmount: '',
         balance: '',
@@ -144,9 +147,15 @@ export default {
     setModal1Visible(modal1Visible) {
       this.modal1Visible = modal1Visible;
     },
+    onChange(date, dateString) {
+      this.searchForm.commissionStartTime = dateString[0];
+      this.searchForm.commissionEndTime = dateString[1];
+
+      console.log(this.searchForm);
+    },
     //获取页面数据
-    getPageData() {
-      getAction('/agentuser/agentUser/finance',).then(res =>{
+    getPageData(searchQuery) {
+      getAction('/agentuser/agentUser/finance',searchQuery).then(res =>{
         console.log("数据",res);
         if(res.success) {
           this.form = res.result;
@@ -154,7 +163,16 @@ export default {
       }).catch(err =>{
         console.log(err);
       })
-    }
+    },
+    // 搜索
+    search() {
+      this.getPageData(this.searchForm)
+    },
+    // 清除搜索
+    clear() {
+      this.searchForm = {};
+      this.getPageData()
+    },
   }
 }
 

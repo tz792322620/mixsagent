@@ -31,11 +31,24 @@
         </div>
 
         <a-table
+          :columns="columns" :data-source="dataSource" :loading="loading"         :pagination="ipagination"
+          @change="handleTableChange" class="j-table-force-nowrap" bordered>
 
-          :columns="columns" :data-source="dataSource" :loading="loading" class="j-table-force-nowrap">
-          <template slot="status" slot-scope="text, record">
-            <span v-html="statusFormat(record.status)"></span>
+          <template slot="status" slot-scope="status">
+
+            <span v-if="status == 0">审核中</span>
+            <span v-if="status == 1">二级审核通过</span>
+            <span v-if="status == 2">一级审核通过</span>
+            <span v-if="status == 3">二级审核拒绝</span>
+            <span v-if="status == 4">一级审核拒绝</span>
+            <span v-if="status == 5">打币中</span>
+            <span v-if="status == 6">已到账</span>
+            <span v-if="status == 7">拒绝</span>
+
           </template>
+<!--          <template slot="status" slot-scope="text, record">-->
+<!--            <span v-html="statusFormat(record.status)"></span>-->
+<!--          </template>-->
           <a slot="name" slot-scope="text">{{ text }}</a>
           <span slot="action" slot-scope="text, record">
             <a class="table-handle-btn" style="background: #2ebd85" @click="editOk(record.id)">通过</a>
@@ -66,6 +79,7 @@
               :disabled="true"
             />
           </a-form-item>
+
           <a-form-item label="手机:" v-if="detailsForm.phone">
             <a-input
               placeholder="请输入手机"
@@ -184,6 +198,18 @@ export default {
   },
   data() {
     return {
+      ipagination:{
+        current: 1,
+        pageSize: 20,
+        pageSizeOptions: ['10', '20', '30'],
+        showTotal: (total, range) => {
+          return range[0] + "-" + range[1] + " 共" + total + "条"
+        },
+        showQuickJumper: true,
+        showSizeChanger: true,
+        total: 0,
+
+      },
       description: '下级代理提币申请管理页面',
       // 表头
       columns: [
@@ -281,7 +307,15 @@ export default {
   },
   methods: {
     initDictConfig() {},
-
+    handleTableChange(pagination, filters, sorter){
+      //TODO 筛选
+      if (Object.keys(sorter).length>0){
+        this.isorter.column = sorter.field;
+        this.isorter.order = "ascend"==sorter.order?"asc":"desc"
+      }
+      this.ipagination = pagination;
+      this.loadData();
+    },
     Ok(record) {
       let httpurl = this.url.Ok
       let method = 'put'
@@ -290,13 +324,16 @@ export default {
           if (res.success) {
             that.$message.success(res.message)
             that.$emit('ok')
+            that.handleRefe()
           } else {
             that.$message.warning(res.message)
           }
         })
         .finally(() => {
           that.$message.success(res.message)
+          that.handleRefe()
         })
+      that.handleRefe()
     },
     No(record) {
       let httpurl = this.url.No
@@ -306,13 +343,16 @@ export default {
           if (res.success) {
             that.$message.success(res.message)
             that.$emit('ok')
+            that.handleRefe()
           } else {
             that.$message.warning(res.message)
           }
         })
         .finally(() => {
           that.$message.success(res.message)
+          that.handleRefe()
         })
+      that.handleRefe()
     },
     getSuperFieldList() {
       let fieldList = []
@@ -439,6 +479,7 @@ export default {
           if (res.success) {
             this.refuseModel = false
             this.$message.success('操作成功', 10)
+            that.getList()
           }
         })
         .catch(err => {

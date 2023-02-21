@@ -18,6 +18,16 @@
               v-decorator="['username',validatorRules.username,{ validator: this.handleUsernameOrEmail }]"
               type="text"
               placeholder="请输入手机号或邮箱">
+              <a-select
+                slot="addonBefore"
+                v-decorator="['areano', { initialValue: '86' }]"
+                style="width: 70px"
+              >
+                <a-select-option value="86" v-for="(item, index) in quhao" :value="item.area_no" :key="index">
+                  {{ item.area_no }}
+                </a-select-option>
+
+              </a-select>
               <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
             </a-input>
           </a-form-item>
@@ -156,6 +166,7 @@ export default {
   },
   data () {
     return {
+      quhao:[],
       wjmmvisible:false,
       customActiveKey: "phone",
       loginBtn: false,
@@ -201,6 +212,7 @@ export default {
     this.currdatetime = new Date().getTime();
     Vue.ls.remove(ACCESS_TOKEN)
     this.getRouterData();
+    this.getListbd();
     this.handleChangeCheckCode();
     // update-begin- --- author:scott ------ date:20190805 ---- for:密码加密逻辑暂时注释掉，有点问题
     //this.getEncrypte();
@@ -223,6 +235,14 @@ export default {
     handleTabClick (key) {
       this.customActiveKey = key
       // this.form.resetFields()
+    },
+    // 查询区号
+    getListbd() {
+      getAction('/business/area/getAreaList')
+        .then(res => {
+          this.quhao = res.result
+          console.log(this.quhao)
+        })
     },
     cancewjmm(){
       this.wjmm = {}
@@ -285,14 +305,14 @@ export default {
         })
         // 使用手机号登录
       } else {
-        that.form.validateFields([ 'username', 'captcha', 'password' ], { force: true }, (err, values) => {
+        that.form.validateFields([ 'username', 'captcha', 'password', 'areano' ], { force: true }, (err, values) => {
           if (!err) {
             // debugger
             loginParams.username = values.username;
             loginParams.password = values.password;
             loginParams.type = 0;
             loginParams.captcha = values.captcha;
-            loginParams.code = '86'
+            loginParams.code = values.areano
 
             that.Login(loginParams).then((res) => {
               console.log(res.result);
@@ -319,7 +339,7 @@ export default {
               }
             }, 1000);
 
-            const hide = this.$message.loading('验证码发送中..', 0);
+            const hide = this.$message.loading('验证码发送中..', 2);
             let smsParams = {};
 
             smsParams.phoneOrMail=that.wjmm.username;
@@ -329,10 +349,10 @@ export default {
             var fsyxtype = 0
             var reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
             if(reg.test(that.wjmm.username)){
-              fsyxtype = 0
+              fsyxtype = 1
 
             }else{
-              fsyxtype = 1
+              fsyxtype = 0
             }
             // smsParams.smsmode="0";
             getSmsCaptcha(that.wjmm.username,fsyxtype,'86').then(res =>{
@@ -359,7 +379,7 @@ export default {
               }
             }, 1000);
 
-            const hide = this.$message.loading('验证码发送中..', 0);
+            const hide = this.$message.loading('验证码发送中..', 2);
             let smsParams = {};
 
             smsParams.phoneOrMail=values.username;
@@ -369,10 +389,10 @@ export default {
             var fsyxtype = 0
             var reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
             if(reg.test(values.username)){
-              fsyxtype = 0
+              fsyxtype = 1
 
             }else{
-              fsyxtype = 1
+              fsyxtype = 0
             }
             // smsParams.smsmode="0";
             getSmsCaptcha(values.username,fsyxtype,'86').then(res =>{

@@ -65,18 +65,18 @@
         <div class="d-flex">
           <div class="d-flex align-center">
             <!-- <div class="min-width-80px">注册时间:</div> -->
-            <a-form-item label="手续费：">
+            <a-form-item label="佣金：">
               <a-select
-                placeholder="手续费"
+                placeholder="佣金"
                 v-model="searchForm.type" style="width: 220px">
                 <a-select-option value="0">
                   手续费
                 </a-select-option>
                 <a-select-option value="1">
-                  打包费
+                  盈亏
                 </a-select-option>
                 <a-select-option value="2">
-                  手续费+打包费
+                  手续费+盈亏
                 </a-select-option>
               </a-select>
             </a-form-item>
@@ -103,8 +103,10 @@
       <a-table
         :columns="columns"
         :data-source="dataSource"
+        :pagination="ipagination"
+        @change="handleTableChange"
         class="j-table-force-nowrap"
-
+        bordered
       >
       <template slot="platformType" slot-scope="platformType">
           <div :key="platformType">
@@ -116,8 +118,8 @@
 
         <template slot="tradeType" slot-scope="tradeType">
           <div :key="tradeType">
-            <span v-if="tradeType == 0">D</span>
-            <span v-if="tradeType == 1">T</span>
+            <span v-if="tradeType == 0">D(工作日+节假日)</span>
+            <span v-if="tradeType == 1">T(工作日)</span>
           </div>
         </template>
 
@@ -131,8 +133,8 @@
         <template slot="type" slot-scope="type">
           <div :key="type">
             <span v-if="type == 0">手续费</span>
-            <span v-if="type == 1">打包</span>
-            <span v-if="type == 2">手续费+打包</span>
+            <span v-if="type == 1">盈亏</span>
+            <span v-if="type == 2">手续费+盈亏</span>
           </div>
         </template>
       <span slot="action" slot-scope="text, record">
@@ -148,49 +150,51 @@
     <!-- 新增弹窗 -->
     <a-modal v-model="addModel" :title="modelTitle" centered @ok="() => (addModel = false)" :footer="null">
       <a-form :form="addForm" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
-        <a-form-item label="平台类型:">
-          <a-select   v-model:value="addForm.platformType" placeholder="请选择平台类型">
-            <a-select-option value="0">币币</a-select-option>
-            <a-select-option value="1">合约</a-select-option>
-            <a-select-option value="2">法币</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item label="结算周期类型:">
-          <a-select
-            placeholder="请选择结算周期类型"
-            style="width: 100%;"
-            v-model:value="addForm.tradeType"
-          >
-            <a-select-option value="0">D</a-select-option>
-            <a-select-option value="1">T</a-select-option>
-          </a-select>
-        </a-form-item>
-
+<!--        <a-form-item label="平台类型:">-->
+<!--          <a-select   v-model:value="addForm.platformType" placeholder="请选择平台类型">-->
+<!--            <a-select-option value="0">币币</a-select-option>-->
+<!--            <a-select-option value="1">合约</a-select-option>-->
+<!--            <a-select-option value="2">法币</a-select-option>-->
+<!--          </a-select>-->
+<!--        </a-form-item>-->
         <a-form-item label="结算周期:">
           <a-input
             v-model:value="addForm.settlementCycle"
             placeholder="请输入结算周期"
           />
         </a-form-item>
+        <a-form-item label="结算周期类型:">
+          <a-select
+            placeholder="请选择结算周期类型"
+            style="width: 40%;"
+            v-model:value="addForm.tradeType"
+          >
+            <a-select-option value="0">D(工作日+节假日)</a-select-option>
+            <a-select-option value="1">T(工作日)</a-select-option>
+          </a-select>
+        </a-form-item>
+
+
         <a-form-item label="是否开启收益:">
-          <a-select    v-model:value="addForm.isOpen" placeholder="请选择是否开启收益">
+          <a-select style="width: 40%;"    v-model:value="addForm.isOpen" placeholder="请选择是否开启收益">
             <a-select-option value="0">否</a-select-option>
             <a-select-option value="1">是</a-select-option>
           </a-select>
         </a-form-item>
 
-        <a-form-item label="佣金比例:">
+        <a-form-item label="费率:">
           <a-input
-            placeholder="请输入佣金比例"
+            suffix="%"
+            placeholder="费率"
             v-model:value="addForm.rate"
           />
         </a-form-item>
 
-        <a-form-item label="手续费:">
-          <a-select    v-model:value="addForm.type" placeholder="请选择是否开启收益">
+        <a-form-item label="佣金:">
+          <a-select   v-model:value="addForm.type" placeholder="请选择是否开启收益">
             <a-select-option value="0">手续费</a-select-option>
-            <a-select-option value="1">打包</a-select-option>
-            <a-select-option value="2">手续费+打包</a-select-option>
+            <a-select-option value="1">盈亏</a-select-option>
+            <a-select-option value="2">手续费+盈亏</a-select-option>
           </a-select>
 
         </a-form-item>
@@ -209,8 +213,8 @@
           <span v-if="detailsForm.platformType == 2">法币</span>
         </a-form-item>
         <a-form-item label="结算周期类型:">
-          <span v-if="detailsForm.tradeType == 0">D</span>
-          <span v-if="detailsForm.tradeType == 1">T</span>
+          <span v-if="detailsForm.tradeType == 0">D(工作日+节假日)</span>
+          <span v-if="detailsForm.tradeType == 1">T(工作日)</span>
 <!--          <a-input class="detail-input-border" v-model="detailsForm.tradeType" default-value="" :disabled="true" />-->
         </a-form-item>
 
@@ -223,17 +227,17 @@
           <span v-if="detailsForm.isOpen == 1">是</span>
 <!--          <a-input class="detail-input-border" v-model="detailsForm.isOpen" default-value="是" :disabled="true" />-->
         </a-form-item>
-        <a-form-item label="佣金比例:">
+        <a-form-item label="费率:">
           <span >{{detailsForm.rate}}</span>
 <!--          <a-input class="detail-input-border" v-model="detailsForm.rate" default-value="135451226888888" :disabled="true" />-->
         </a-form-item>
 <!--        <a-form-item label="代理商备注:">-->
 <!--          <a-input class="detail-input-border" default-value="" :disabled="true" />-->
 <!--        </a-form-item>-->
-        <a-form-item label="手续费:">
+        <a-form-item label="佣金:">
           <span v-if="detailsForm.type == 0">手续费</span>
-          <span v-if="detailsForm.type == 1">打包</span>
-          <span v-if="detailsForm.type == 2">手续费+打包</span>
+          <span v-if="detailsForm.type == 1">盈亏</span>
+          <span v-if="detailsForm.type == 2">手续费+盈亏</span>
 <!--          <a-input class="detail-input-border" v-model="detailsForm.type" default-value="打包" :disabled="true" />-->
         </a-form-item>
       </a-form>
@@ -259,34 +263,26 @@ export default {
   },
   data() {
     return {
+      ipagination:{
+        current: 1,
+        pageSize: 20,
+        pageSizeOptions: ['10', '20', '30'],
+        showTotal: (total, range) => {
+          return range[0] + "-" + range[1] + " 共" + total + "条"
+        },
+        showQuickJumper: true,
+        showSizeChanger: true,
+        total: 0,
+
+      },
       description: '代理商收益配置管理页面',
       modelTitle: '新增',
       // 表头
       columns: [
-
         {
-          title: '平台类型',
+          title: '代理商编号',
           align: 'center',
-          dataIndex: 'platformType',
-          key: 'platformType',
-          scopedSlots: { customRender: 'platformType' },
-        },
-        {
-          title: '结算周期类型',
-          align: 'center',
-          dataIndex: 'tradeType',
-          key: 'tradeType',
-          scopedSlots: { customRender: 'tradeType' },
-        },
-        {
-          title: '币种编号',
-          align: 'center',
-          dataIndex: 'virtualCoinId',
-        },
-        {
-          title: '费率',
-          align: 'center',
-          dataIndex: 'rate',
+          dataIndex: 'agentId',
         },
         {
           title: '结算周期',
@@ -295,19 +291,33 @@ export default {
           scopedSlots: { customRender: 'settlementCycle' },
         },
         {
+          title: '结算周期类型',
+          align: 'center',
+          dataIndex: 'tradeType',
+          key: 'tradeType',
+          scopedSlots: { customRender: 'tradeType' },
+        },
+        // {
+        //   title: '币种编号',
+        //   align: 'center',
+        //   dataIndex: 'virtualCoinId',
+        // },
+        {
+          title: '费率',
+          align: 'center',
+          dataIndex: 'rate',
+        },
+
+        {
           title: '是否开启该项收益',
           align: 'center',
           dataIndex: 'isOpen',
           key: 'isOpen',
           scopedSlots: { customRender: 'isOpen' },
         },
+
         {
-          title: '代理商编号',
-          align: 'center',
-          dataIndex: 'agentId',
-        },
-        {
-          title: '手续费',
+          title: '佣金',
           align: 'center',
           dataIndex: 'type',
           key: 'type',
@@ -363,6 +373,15 @@ export default {
     },
   },
   methods: {
+    handleTableChange(pagination, filters, sorter){
+      //TODO 筛选
+      if (Object.keys(sorter).length>0){
+        this.isorter.column = sorter.field;
+        this.isorter.order = "ascend"==sorter.order?"asc":"desc"
+      }
+      this.ipagination = pagination;
+      this.loadData();
+    },
     initDictConfig() {},
     getSuperFieldList() {
       let fieldList = []

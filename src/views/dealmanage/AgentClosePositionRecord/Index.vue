@@ -17,25 +17,25 @@
                 </a-form-item>
               </div>
             </div>
-            <div class="px-6"></div>
+<!--            <div class="px-6"></div>-->
 
-            <div class="d-flex">
-              <div class="d-flex align-center">
-                <a-form-item label="逐仓/全仓:">
-                  <a-select
-                    placeholder="全部"
-                    v-model="searchForm.depotType" style="width: 220px">
-                    <a-select-option value="0">
-                      逐仓
-                    </a-select-option>
-                    <a-select-option value="1">
-                      全仓
-                    </a-select-option>
+<!--            <div class="d-flex">-->
+<!--              <div class="d-flex align-center">-->
+<!--                <a-form-item label="逐仓/全仓:">-->
+<!--                  <a-select-->
+<!--                    placeholder="全部"-->
+<!--                    v-model="searchForm.depotType" style="width: 220px">-->
+<!--                    <a-select-option value="0">-->
+<!--                      逐仓-->
+<!--                    </a-select-option>-->
+<!--                    <a-select-option value="1">-->
+<!--                      全仓-->
+<!--                    </a-select-option>-->
 
-                  </a-select>
-                </a-form-item>
-              </div>
-            </div>
+<!--                  </a-select>-->
+<!--                </a-form-item>-->
+<!--              </div>-->
+<!--            </div>-->
             <div class="px-6"></div>
             <div class="d-flex">
               <div class="d-flex align-center">
@@ -92,16 +92,22 @@
       <a-table
         :columns="columns"
         :data-source="dataSource"
+        :pagination="ipagination"
+        @change="handleTableChange"
         class="j-table-force-nowrap"
-
+        bordered
       >
         <template  slot="direction" slot-scope="text">
-          <span style="color:green" v-if="text == 0">开多</span>
-          <span style="color:red" v-if="text == 1">开空</span>
+          <span style="color:green" v-if="text == 'BULL'">买涨</span>
+          <span style="color:red" v-if="text == 'BEAR'">买跌</span>
         </template>
-        <template  slot="depotType" slot-scope="text">
-          <span style="color:green" v-if="text == 0">逐仓</span>
-          <span style="color:red" v-if="text == 1">全仓</span>
+        <template  slot="orderStatus" slot-scope="text">
+          <span style="color:green" v-if="text == 'CANCEL'">已撤销</span>
+          <span style="color:red" v-if="text == 'DEALED'">已成交</span>
+          <span style="color:red" v-if="text == 'WAIT'">已委托</span>
+        </template>
+        <template  slot="userId" slot-scope="text">
+          <span style="color:green" v-if="text">全仓</span>
         </template>
       <!-- <a slot="direction" slot-scope="text">{{ text }}1</a>
       <template  slot="direction" slot-scope="text">
@@ -177,12 +183,12 @@ import {getPositionRecord} from "@/api/agentUser"
 import { getAction } from '@/api/manage'
 //表头
 const columns = [
-  // {
-  //   title: '序号',
-  //   dataIndex: 'id',
-  //   key: 'id',
-  //   scopedSlots: { customRender: 'name' },
-  // },
+  {
+    title: '委托订单号',
+    dataIndex: 'orderSn',
+    key: 'orderSn',
+    // width: 100,
+  },
   {
     title: '下级账号',
     dataIndex: 'phoneNo',
@@ -196,12 +202,21 @@ const columns = [
     // width: 100,
   },
   {
+    align: 'center',
+    title: '类型',
+    dataIndex: 'userId',
+    key: 'userId',
+    scopedSlots: { customRender: 'userId' },
+  },
+  {
+    align: 'center',
     title: '合约品种',
     dataIndex: 'displayName',
     key: 'displayName',
 
   },
   {
+    align: 'center',
     title: '方向',
     dataIndex: 'direction',
     key: 'direction',
@@ -209,46 +224,80 @@ const columns = [
     scopedSlots: { customRender: 'direction' },
   },
   {
-    title: '逐仓/全仓',
-    dataIndex: 'depotType',
-    key: 'depotType',
-    scopedSlots: { customRender: 'depotType' },
-  },
-  {
-    title: '结算盈亏',
-    dataIndex: 'entrustAmount',
-    key: 'entrustAmount'
+    align: 'center',
+    title: '合约数量',
+    dataIndex: 'amount',
+    key: 'amount'
   },
   // {
-  //   title: '盈亏率',
+  //   align: 'center',
+  //   title: '逐仓/全仓',
   //   dataIndex: 'depotType',
-  //   key: 'depotType'
-  // },
-  // {
-  //   title: '强平风险金',
-  //   dataIndex: 'mail2',
-  //   key: 'mail2'
+  //   key: 'depotType',
+  //   scopedSlots: { customRender: 'depotType' },
+  //
   // },
   {
+    align: 'center',
     title: '杠杆倍数',
     dataIndex: 'lever',
     key: 'lever'
   },
-  // {
-  //   title: '持仓均价',
-  //   dataIndex: 'mail5',
-  //   key: 'mail5'
-  // },
-   {
+  {
     title: '平仓价格',
-    dataIndex: 'closeDepotPrice',
-    key: 'closeDepotPrice'
+    dataIndex: 'closePrice',
+    key: 'closePrice'
   },
-   {
-    title: '手续费',
-    dataIndex: 'profitLoss',
-    key: 'profitLoss'
+  {
+    align: 'center',
+    title: '手续费（开仓+平仓）',
+    dataIndex: 'commissionFee',
+    key: 'commissionFee',
+
   },
+
+  {
+    align: 'center',
+    title: '委托价',
+    dataIndex: 'orderPrice',
+    key: 'orderPrice',
+
+  },
+  {
+    align: 'center',
+    title: '结算盈亏',
+    dataIndex: 'settledProfit',
+    key: 'settledProfit',
+
+  },
+  // {
+  //   title: '预估强平价',
+  //   dataIndex: 'mail2',
+  //   key: 'mail2'
+  // },
+  // {
+  //   align: 'center',
+  //   title: '购买类型',
+  //   dataIndex: 'tradeType',
+  //   key: 'tradeType',
+  //
+  // },
+
+  {
+    align: 'center',
+    title: '仓位创建时间',
+    dataIndex: 'createdDate',
+    key: 'createdDate',
+
+  },
+  // {
+  //   align: 'center',
+  //   title: '委托状态',
+  //   dataIndex: 'orderStatus',
+  //   key: 'orderStatus',
+  //   scopedSlots: { customRender: 'orderStatus' },
+  //
+  // },
   {
     title: '成交时间',
     dataIndex: 'createdDate',
@@ -303,7 +352,19 @@ export default {
       loading: false,
       pageQuery: {
         pageNo: 1,
-        pageSize: 10
+        pageSize: 99999
+      },
+      ipagination:{
+        current: 1,
+        pageSize: 20,
+        pageSizeOptions: ['10', '20', '30'],
+        showTotal: (total, range) => {
+          return range[0] + "-" + range[1] + " 共" + total + "条"
+        },
+        showQuickJumper: true,
+        showSizeChanger: true,
+        total: 0,
+
       },
       searchForm:{},
     }
@@ -313,6 +374,15 @@ export default {
     this.getList();
   },
   methods: {
+    handleTableChange(pagination, filters, sorter){
+      //TODO 筛选
+      if (Object.keys(sorter).length>0){
+        this.isorter.column = sorter.field;
+        this.isorter.order = "ascend"==sorter.order?"asc":"desc"
+      }
+      this.ipagination = pagination;
+      this.loadData();
+    },
     handleChange(item){
       console.log(item)
     },

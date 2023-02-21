@@ -14,12 +14,12 @@
       <div class="d-flex mt-7">
         <div class=" d-flex align-center">
           <div class="min-width-80px">佣金月份 : </div>
-          <a-range-picker style="width: 220px"></a-range-picker>
+          <a-range-picker style="width: 220px" @change="onChange"  format="YYYY-MM-DD HH:mm:ss" v-model="timeEl"/>
         </div>
         <div class="px-6"></div>
         <div>
-          <a-button class="mr-6 search-btn-circle" type="primary">筛选</a-button>
-          <a-button class="clear-btn-circle">重置</a-button>
+          <a-button class="mr-6 search-btn-circle" type="primary" @click="search">筛选</a-button>
+          <a-button class="clear-btn-circle" @click="clear">重置</a-button>
         </div>
       </div>
 
@@ -38,20 +38,22 @@
 import { getAgentFinance } from "@/api/agentUser"
 import { getAction } from '@/api/manage'
 let data = [
-  { text: '发放时间', value: '-' ,flag: 'openTime' },
+  { text: '结算周期', value: '-' ,flag: 'openTime' },
   { text: '活跃账户', value: '-' , flag: 'userAmount'},
   { text: '有效新增账户', value: '-' , flag: 'userAmounts'},
   { text: '合约净输赢', value: '-'  , flag: 'contractProfit'},
   { text: '体育净输赢', value: '-'  , flag: 'sportProfit'},
   { text: '佣金比例', value: '-'  , flag: 'incomes'},
   { text: '佣金', value: '-'  , flag: 'income'},
-  { text: '佣金发放状态', value: '-'  , flag: 'incomeStatus'}
+  { text: '佣金发放状态', value: '-'  , flag: 'incomeStatusName'}
 ]
 
 export default {
   data() {
     return {
       data,
+      timeEl:[],
+      searchForm:{},
       form:  {
         openTime: null,
         userAmount: null,
@@ -68,9 +70,15 @@ export default {
     this.getPageData();
   },
   methods: {
+    onChange(date, dateString) {
+      this.searchForm.commissionStartTime = dateString[0];
+      this.searchForm.commissionEndTime = dateString[1];
+
+      console.log(this.searchForm);
+    },
     //获取页面数据
-    getPageData() {
-      getAction('/agentuser/agentUser/agentFinance',).then(res =>{
+    getPageData(searchQuery) {
+      getAction('/agentuser/agentUser/agentFinance',searchQuery).then(res =>{
         console.log("数据",res);
         if(res.success) {
           this.form = res.result;
@@ -92,7 +100,16 @@ export default {
         })
       }
 
-    }
+    },
+    // 搜索
+    search() {
+      this.getPageData(this.searchForm)
+    },
+    // 清除搜索
+    clear() {
+      this.searchForm = {};
+      this.getPageData()
+    },
   }
 }
 

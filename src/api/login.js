@@ -40,6 +40,17 @@ export function getSmsCaptcha(phoneOrMail,type,code) {
   })
 }
 
+export function sendCaptchaAddress(phoneOrMail,type,code) {
+  return axios({
+    url: '/sys/sendCaptchaAddress',
+    method: 'post',
+    data: {
+      phoneOrMail,
+      type,
+      code
+    }
+  })
+}
 
 
 // export function getInfo() {

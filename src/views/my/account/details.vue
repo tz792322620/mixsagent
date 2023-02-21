@@ -18,8 +18,8 @@
               </a-form-item>
             </div>
             <div class="d-flex align-center">
-              <a-form-item label="充值hash">
-                <a-input placeholder="请输入充值hash" v-model="searchForm.hash" clear style="width: 100%;"></a-input>
+              <a-form-item label="订单hash">
+                <a-input placeholder="请输入订单hash" v-model="searchForm.hash" clear style="width: 100%;"></a-input>
               </a-form-item>
             </div>
             <div class="d-flex align-center">
@@ -34,9 +34,14 @@
           </div>
         </div>
       </a-form>
-      <a-table  :columns="columns" :data-source="dataSource" :loading="loading" class="mt-8">
-        <template slot="type" slot-scope="text, record">
-          <span>提出</span>
+      <a-table  :columns="columns" :data-source="dataSource" :loading="loading"   :pagination="ipagination"
+                @change="handleTableChange" class="mt-8" bordered>
+        <template  slot="type" slot-scope="text">
+          <span  v-if="text == 0">充值</span>
+          <span  v-if="text == 1">提现</span>
+          <span  v-if="text == 2">转账(进帐)</span>
+          <span  v-if="text == 3">转账(出账)</span>
+          <span  v-if="text == 4">提现驳回</span>
         </template>
         <span slot="action" slot-scope="text, record">
           <a-button class="mr-4">编辑</a-button>
@@ -64,24 +69,53 @@ const columns = [
     scopedSlots: { customRender: 'type' }
   },
   {
-    title: '账变金额(USDT)',
-    dataIndex: 'beforeBalance',
-    key: 'beforeBalance',
-    ellipsis: true
-  },
-  {
-    title: '余额(USDT)',
+    title: '交易金额',
     dataIndex: 'amount',
     key: 'amount',
     ellipsis: true
   },
   {
-    title: '充值hash',
+    title: '交易前余额',
+    dataIndex: 'beforeBalance',
+    key: 'beforeBalance',
+    ellipsis: true
+  },
+  {
+    title: '交易前冻结',
+    dataIndex: 'beforeFreeze',
+    key: 'beforeFreeze',
+    ellipsis: true
+  },
+  {
+    title: '交易后余额',
+    dataIndex: 'afterBalance',
+    key: 'afterBalance',
+    ellipsis: true
+  },
+  {
+    title: '交易后冻结',
+    dataIndex: 'afterFreeze',
+    key: 'afterFreeze',
+    ellipsis: true
+  },
+  {
+    title: '手续费',
+    dataIndex: 'commissionCharge',
+    key: 'commissionCharge',
+    ellipsis: true
+  },
+  {
+    title: '订单hash',
     dataIndex: 'hash',
     key: 'hash'
   },
   {
-    title: '时间',
+    title: '备注',
+    dataIndex: 'recordName',
+    key: 'recordName'
+  },
+  {
+    title: '账变时间',
     dataIndex: 'createTime',
     key: 'createTime'
   }
@@ -92,6 +126,18 @@ export default {
   components: {},
   data() {
     return {
+      ipagination:{
+        current: 1,
+        pageSize: 20,
+        pageSizeOptions: ['10', '20', '30'],
+        showTotal: (total, range) => {
+          return range[0] + "-" + range[1] + " 共" + total + "条"
+        },
+        showQuickJumper: true,
+        showSizeChanger: true,
+        total: 0,
+
+      },
       dataSource: [],
       columns,
       pageQuery: {
@@ -106,6 +152,15 @@ export default {
     this.getList(this.pageQuery)
   },
   methods: {
+    handleTableChange(pagination, filters, sorter){
+      //TODO 筛选
+      if (Object.keys(sorter).length>0){
+        this.isorter.column = sorter.field;
+        this.isorter.order = "ascend"==sorter.order?"asc":"desc"
+      }
+      this.ipagination = pagination;
+      this.loadData();
+    },
     handleChange(item) {
       console.log(item)
     },

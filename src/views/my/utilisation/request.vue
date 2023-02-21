@@ -18,7 +18,7 @@
             <div></div>
             <div class="tab-item-text">
               <span v-if="!isHide">*******</span>
-              <span v-else>{{dataForm.balance}}</span>
+              <span v-else>{{balance}}</span>
               <div class="icon" @click="changehide">
                 <img v-if="isHide" src="../../../assets/icon/eye.svg" />
                 <img v-else src="../../../assets/icon/eye-hide.svg" />
@@ -36,7 +36,7 @@
             <div class="color-999">不可用佣金</div>
             <div class="tab-item-text">
               <span v-if="!isHide">*******</span>
-              <span v-else>{{dataForm.free}}</span>
+              <span v-else>{{free}}</span>
               <div class="icon" @click="changehide">
                 <img v-if="isHide" src="../../../assets/icon/eye.svg" />
                 <img v-else src="../../../assets/icon/eye-hide.svg" />
@@ -47,17 +47,19 @@
       </div>
 
       <div class="my-5 d-flex">
-        <div type="primary" shape="round" class="primary-border-color px-4 py-1 primary-color" style="border-radius: 15px;cursor:pointer;" @click="handleAddAddress2()" >添加提币地址</div>
+        <div v-if="tbdz == null" type="primary" shape="round" class="primary-border-color px-4 py-1 primary-color" style="border-radius: 15px;cursor:pointer;" @click="handleAddAddress2()" >添加提币地址</div>
         <!-- 添加提币成功后显示样式  对接数据后启用 -->
-        <div v-if="false" class="add-success-text-style px-4 py-1">{{dataForm.agentVirtualAddress}}</div>
+        <div v-if="tbdz != null" class="add-success-text-style px-4 py-1" @click="handleAddAddress2()">{{tbdz}}</div>
       </div>
-      <a-table  :columns="columns" :data-source="dataForm.withdrawalRecordVos" class="mt-4">
+      <a-table  :columns="columns" :data-source="dataForm.withdrawalRecordVos"          :pagination="ipagination"
+                @change="handleTableChange"  bordered class="mt-4">
 
         <template slot="status" slot-scope="status">
 
-            <span v-if="status == 1">审核中</span>
-            <span v-if="status == 2">二级审核通过</span>
-            <span v-if="status == 3">一级审核通过</span>
+            <span v-if="status == 0">审核中</span>
+            <span v-if="status == 1">二级审核通过</span>
+            <span v-if="status == 2">一级审核通过</span>
+            <span v-if="status == 3">二级审核拒绝</span>
             <span v-if="status == 4">一级审核拒绝</span>
             <span v-if="status == 5">打币中</span>
             <span v-if="status == 6">已到账</span>
@@ -85,7 +87,7 @@
 
             <a-input style="width: 8rem;"  a-input v-model="addAddressForm.phoneCode"  placeholder="请输入手机验证码"  >
             </a-input>
-            <a-button style="width: 8rem;"  @click.stop.prevent="getsjyyzm()"  v-text="!yxstate.smsSendBtn && '获取验证码' || (yxstate.time+' s')">
+            <a-button style="width: 8rem;"  @click.stop.prevent="getsjyzm()"  v-text="!yxstate.smsSendBtn && '获取验证码' || (yxstate.time+' s')">
             </a-button>
           </div>
         </a-form-item>
@@ -97,6 +99,18 @@
             <a-button style="width: 8rem;"  @click.stop.prevent="getyxyzm()"  v-text="!yxstate.smsSendBtn && '获取验证码' || (yxstate.time+' s')">
             </a-button>
           </div>
+        </a-form-item>
+
+
+        <a-form-item v-if="mail == null">
+          <div style="display: flex">
+
+            <a-input style="width: 8rem;"  a-input v-model="tbxxform.mailCode"  placeholder="请输入邮箱验证码"  >
+            </a-input>
+            <a-button style="width: 10rem;"    v-text="'请先绑定邮箱'">
+            </a-button>
+          </div>
+
         </a-form-item>
       </a-form>
       <div class="d-flex justify-space-around">
@@ -117,11 +131,11 @@
     <div>
       <a-form :form="tbxxform" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" @submit="handleSubmit">
         <!-- 未添加账户提现显示 -->
-        <a-form-item label="提币地址:" >
-          <a-input v-model="tbxxform.virtualAddress"  placeholder="请输入提币地址" />
+        <a-form-item label="提币地址:"  >
+          <a-input v-model="tbxxform.virtualAddress"  placeholder="请输入提币地址"  :disabled="true"/>
         </a-form-item>
         <a-form-item label="确认地址:"  >
-          <a-input v-model="tbxxform.qrvirtualAddress"  placeholder="请再次输入提币地址" />
+          <a-input v-model="tbxxform.qrvirtualAddress"  placeholder="请再次输入提币地址"  :disabled="true" />
         </a-form-item>
         <!-- 添加账户后提现显示 -->
         <a-form-item label="虚拟币账户:" v-if="false">
@@ -170,6 +184,17 @@
           </div>
 
         </a-form-item>
+
+        <a-form-item v-if="mail == null">
+          <div style="display: flex">
+
+            <a-input style="width: 8rem;"  a-input v-model="tbxxform.mailCode"  placeholder="请输入邮箱验证码"  >
+            </a-input>
+            <a-button style="width: 10rem;"    v-text="'请先绑定邮箱'">
+            </a-button>
+          </div>
+
+        </a-form-item>
       </a-form>
       <a-button class="primary" block style="background: #49B1B3;color: #fff;" @click="tibi()">确认</a-button>
     </div>
@@ -187,7 +212,8 @@
     <a-form >
       <a-form-item>
         <a-input
-            v-decorator="['note', { rules: [{ required: true, message: '请输入原密码' }] }]" placeholder="请输入原密码"
+            v-model="yzmm"
+            v-decorator="['note', { rules: [{ required: true, message: '请输入支付密码' }] }]" placeholder="请输入支付密码"
           />
       </a-form-item>
 
@@ -217,11 +243,11 @@
         </li>
         <li class="des-item">
           <span class="des-item-title">手续费(USDT)：</span>
-          <span class="des-item-data main-color">{{ detailsForm.amount }} </span>
+          <span class="des-item-data main-color">{{ detailsForm.commissionCharge }} </span>
         </li>
         <li class="des-item">
           <span class="des-item-title">到账(USDT)：</span>
-          <span class="des-item-data main-color">{{ detailsForm.amount }} </span>
+          <span class="des-item-data main-color">{{ detailsForm.actualAmount }} </span>
         </li>
 
         <li class="des-item">
@@ -253,7 +279,7 @@
 import { httpAction, getAction } from '@/api/manage'
 import { postAction } from '../../../api/manage';
 import { mapActions, mapGetters,mapState } from 'vuex'
-import { getSmsCaptcha } from '@/api/login'
+import { getSmsCaptcha,sendCaptchaAddress } from '@/api/login'
 const columns = [
   // {
   //   title: '币种分类',
@@ -269,11 +295,17 @@ const columns = [
   },
 
   {
-    title: '虚拟币账户',
+    title: '提现地址',
     dataIndex: 'virtualAddress',
     key: 'virtualAddress',
 
   },
+  // {
+  //   title: '虚拟币账户',
+  //   dataIndex: 'virtualAddress',
+  //   key: 'virtualAddress',
+  //
+  // },
   {
     title: '提款金额(USDT)',
     dataIndex: 'amount',
@@ -282,14 +314,14 @@ const columns = [
   },
   {
     title: '预计手续费(USDT)',
-    dataIndex: 'address',
-    key: 'address 4',
+    dataIndex: 'commissionCharge',
+    key: 'commissionCharge',
 
   },
   {
     title: '预计到帐(USDT)',
-    dataIndex: 'amount1',
-    key: 'amount1',
+    dataIndex: 'actualAmount',
+    key: 'actualAmount',
 
   },
   {
@@ -306,7 +338,7 @@ const columns = [
 
   },
   {
-    title: '修改时间',
+    title: '到账时间',
     dataIndex: 'updateTime',
     key: 'updateTime',
 
@@ -347,6 +379,19 @@ const data = [
 export default {
   data(){
     return {
+      ipagination:{
+        current: 1,
+        pageSize: 20,
+        pageSizeOptions: ['10', '20', '30'],
+        showTotal: (total, range) => {
+          return range[0] + "-" + range[1] + " 共" + total + "条"
+        },
+        showQuickJumper: true,
+        showSizeChanger: true,
+        total: 0,
+
+      },
+      tbdz:'',
       mail:'',
       phoneNo:'',
       sjstate: {
@@ -389,7 +434,10 @@ export default {
         phoneCode:'',
         mailCode:'',
       },
-      xyvalue:'a'
+      xyvalue:'a',
+      yzmm:'',
+      balance:'',
+      free:''
     }
     },
     created() {
@@ -397,6 +445,15 @@ export default {
     },
     methods: {
       ...mapGetters(["nickname", "avatar","userInfo"]),
+      handleTableChange(pagination, filters, sorter){
+        //TODO 筛选
+        if (Object.keys(sorter).length>0){
+          this.isorter.column = sorter.field;
+          this.isorter.order = "ascend"==sorter.order?"asc":"desc"
+        }
+        this.ipagination = pagination;
+        this.loadData();
+      },
       xq(e){
         this.detailsForm = e
         this.detailsModal = true
@@ -407,12 +464,28 @@ export default {
           this.$message.error('确认地址不一致');
           return
         }
+        if (this.tbxxform.amount == null || this.tbxxform.amount <= 0){
+          this.$message.error('提币数量不能为0或者空');
+          return
+        }
+        console.log('手机或邮箱验证码不能为空')
+        console.log(this.tbxxform.phoneCode)
+        if (this.tbxxform.phoneCode == null || this.tbxxform.mailCode  == null){
+          this.$message.error('手机或邮箱验证码不能为空');
+          return
+        }
+        if (!this.tbxxform.phoneCode || !this.tbxxform.mailCode){
+          this.$message.error('手机或邮箱验证码不能为空');
+          return
+        }
 
         postAction('/agentuser/agentUser/apply',this.tbxxform).then(res =>{
           console.log("添加提币",res);
           if(res.code == 200){
+            this.getPageData();
             this.$message.success('提币成功');
           }else {
+            this.getPageData();
             this.$message.error(res.message);
           }
           this.modal2Visible = false;
@@ -449,15 +522,29 @@ export default {
       //   cancelText: '取消',
       //   centered: 'true'
       // });
-      // this.pasVisible = true;
+      this.pasVisible = true;
 
-      this.isHide = !this.isHide;
+      // this.isHide = !this.isHide;
 
     },
     //验证输入密码
     verifyCode() {
-      this.pasVisible = false;
-      this.isHide = !this.isHide;
+      postAction('/withdrawal/withdrawal/getCommissionBalance',{password:this.yzmm}).then(res =>{
+        console.log("验证输入密码",res);
+        if(res.code == 200){
+          this.balance = res.result.afterBalance;
+          this.free = res.result.afterFreeze;
+          this.pasVisible = false;
+          this.isHide = !this.isHide;
+        }else {
+          this.$message.error(res.message);
+          this.pasVisible = false;
+        }
+        this.addAddressModel = false;
+      }).catch(err =>{
+        console.log(err);
+      });
+
     },
     onSearch() {
 
@@ -481,7 +568,7 @@ export default {
         }, 1000);
       }
 
-      getSmsCaptcha(this.mail,1,'86').then(res =>{
+      sendCaptchaAddress(this.mail,1,'86').then(res =>{
         console.log(res);
 
       }).catch(err => {
@@ -509,7 +596,7 @@ export default {
         }, 1000);
       }
 
-      getSmsCaptcha(this.phoneNo,0,'86').then(res =>{
+      sendCaptchaAddress(this.phoneNo,0,'86').then(res =>{
         console.log(res);
 
       }).catch(err => {
@@ -521,12 +608,28 @@ export default {
     getPageData() {
       this.mail = this.userInfo().mail
       this.phoneNo = this.userInfo().phoneNo
-
+      console.log(this.mail);
+      console.log(this.phoneNo);
       getAction('/agentuser/agentUser/drawing').then(res =>{
         console.log(res);
         if(res.success){
           const data = res.result;
           this.dataForm = data;
+        }
+      }).catch(err =>{
+        console.log(err);
+      });
+
+      getAction('/agent/agent/address').then(res =>{
+        console.log(res);
+        if(res.success){
+          const data = res.result;
+          this.tbdz = data;
+          // this.addAddressForm.virtualAddress= data;
+          this.tbxxform.qrvirtualAddress= data;
+          this.tbxxform.virtualAddress= data;
+          console.log(this.tbdz)
+
         }
       }).catch(err =>{
         console.log(err);
@@ -540,11 +643,18 @@ export default {
       this.addAddressModel = true;
     },
     submitAddAdress() {
+      if (this.addAddressForm.virtualAddress== null){
+        this.$message.error('地址不能为空');
+        return
+      }
+
       postAction('/agent/agent/addAddress',this.addAddressForm).then(res =>{
         console.log("添加提币地址",res);
         if(res.code == 200){
+          this.getPageData();
           this.$message.success('添加地址成功');
         }else {
+          this.getPageData();
           this.$message.error(res.message);
         }
         this.addAddressModel = false;

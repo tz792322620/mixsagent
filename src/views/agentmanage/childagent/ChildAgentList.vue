@@ -1,7 +1,7 @@
 <!--  下级代理管理 -->
 <template>
 <div  class="pa-6">
-  <div class="card pa-6">
+  <div class="card pa-6" v-if="showType == 'list'" :bordered="false">
     <!-- 头部标题 -->
     <div class="title-top">
         <div class="font-size-30 font-bold">下级代理管理</div>
@@ -125,7 +125,7 @@
         </template>
 
         <span slot="action" slot-scope="text, record">
-          <a class="table-handle-btn" @click="handleDetail">详情</a>
+          <a class="table-handle-btn" @click="handleDetail(record.id)">详情</a>
           <a-dropdown class="table-handle-btn">
             <a class="ant-dropdown-link table-handle-btn">更多 <a-icon type="down" /></a>
             <a-menu slot="overlay">
@@ -180,11 +180,17 @@
         </div>
     </a-modal>
   </div>
+
+  <!--    显示详情-->
+  <div v-if="showType == 'detail'">
+    <ChildUserBaseInfo :id="showInfoId" @back="closeInfoPage" />
+  </div>
 </div>
 </template>
 
 <script>
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import ChildUserBaseInfo from './modules/ChildUserBaseInfo'
 import ChildAgentModal from './modules/ChildAgentModal'
 import '@/assets/less/TableExpand.less'
 import { postAction, getAction } from '@/api/manage'
@@ -195,10 +201,12 @@ export default {
   mixins: [JeecgListMixin],
   components: {
     ChildAgentModal,
+    ChildUserBaseInfo,
   },
   data() {
     return {
       description: '下级代理列表管理页面',
+      showType: 'list', //页面显示卡片类型   list  detail  label
       // 表头
       columns: [
         {
@@ -356,8 +364,20 @@ export default {
       this.editModel = true;
     },
     // 详情
-    handleDetail() {
-      this.detailModel = true;
+    // 显示详情
+    handleDetail(id) {
+      this.showType = 'detail'
+      // debugger
+      // return
+      this.showInfoId = id
+      this.AgentAssetDetails(id)
+    },
+
+    // 关闭基本信息
+    closeInfoPage() {
+      this.showType = 'list'
+      this.isShowInfoPage = false
+
     },
     // 删除
     handleDel() {
@@ -369,6 +389,17 @@ export default {
         centered: 'true'
       });
 
+    },
+    // 查询代理信息
+    AgentAssetDetails(id) {
+      getAction('/childagent/childAgent/findAgentAssetDetails',{id:id}).then(res =>{
+        // console.log(res);
+        if(res.success){
+          console.log(res);
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
     },
     // 查询列表数据
     getList(searchQuery) {

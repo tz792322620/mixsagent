@@ -20,43 +20,43 @@
             </div>
             <div class="px-6"></div>
 
-            <div class="d-flex">
-              <div class="d-flex align-center">
-                <a-form-item label="委托状态:">
-                  <a-select
-                    placeholder="全部"
-                    v-model="searchForm.orderStatus" style="width: 220px">
-                    <a-select-option value="CANCEL">
-                      已撤销
-                    </a-select-option>
-                    <a-select-option value="DEALED">
-                      已成交
-                    </a-select-option>
-                    <a-select-option value="WAIT">
-                      已委托
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </div>
-            </div>
+<!--            <div class="d-flex">-->
+<!--              <div class="d-flex align-center">-->
+<!--                <a-form-item label="委托状态:">-->
+<!--                  <a-select-->
+<!--                    placeholder="全部"-->
+<!--                    v-model="searchForm.orderStatus" style="width: 220px">-->
+<!--                    <a-select-option value="CANCEL">-->
+<!--                      已撤销-->
+<!--                    </a-select-option>-->
+<!--                    <a-select-option value="DEALED">-->
+<!--                      已成交-->
+<!--                    </a-select-option>-->
+<!--                    <a-select-option value="WAIT">-->
+<!--                      已委托-->
+<!--                    </a-select-option>-->
+<!--                  </a-select>-->
+<!--                </a-form-item>-->
+<!--              </div>-->
+<!--            </div>-->
 
-            <div class="d-flex">
-              <div class="d-flex align-center">
-                <a-form-item label="逐仓/全仓:">
-                  <a-select
-                    placeholder="全部"
-                    v-model="searchForm.depotType" style="width: 220px">
-                    <a-select-option value="0">
-                      逐仓
-                    </a-select-option>
-                    <a-select-option value="1">
-                      全仓
-                    </a-select-option>
+<!--            <div class="d-flex">-->
+<!--              <div class="d-flex align-center">-->
+<!--                <a-form-item label="逐仓/全仓:">-->
+<!--                  <a-select-->
+<!--                    placeholder="全部"-->
+<!--                    v-model="searchForm.depotType" style="width: 220px">-->
+<!--                    <a-select-option value="0">-->
+<!--                      逐仓-->
+<!--                    </a-select-option>-->
+<!--                    <a-select-option value="1">-->
+<!--                      全仓-->
+<!--                    </a-select-option>-->
 
-                  </a-select>
-                </a-form-item>
-              </div>
-            </div>
+<!--                  </a-select>-->
+<!--                </a-form-item>-->
+<!--              </div>-->
+<!--            </div>-->
             <div class="px-6"></div>
             <div class="d-flex">
               <div class="d-flex align-center">
@@ -117,16 +117,22 @@
         :columns="columns"
         :data-source="dataSource"
         :loading="loading"
+        :pagination="ipagination"
+        @change="handleTableChange"
         class="j-table-force-nowrap"
-
+        bordered
       >
       <template  slot="direction" slot-scope="text">
-        <span style="color:green" v-if="text == 0">开多</span>
-        <span style="color:red" v-if="text == 1">开空</span>
+        <span style="color:green" v-if="text == 'BULL'">买涨</span>
+        <span style="color:red" v-if="text == 'BEAR'">买跌</span>
       </template>
-      <template  slot="depotType" slot-scope="text">
-        <span style="color:green" v-if="text == 0">逐仓</span>
-        <span style="color:red" v-if="text == 1">全仓</span>
+      <template  slot="userId" slot-scope="text">
+        <span style="color:green" v-if="text">全仓</span>
+      </template>
+      <template  slot="orderStatus" slot-scope="text">
+        <span style="color:green" v-if="text == 'CANCEL'">已撤销</span>
+        <span style="color:red" v-if="text == 'DEALED'">已成交</span>
+        <span style="color:red" v-if="text == 'WAIT'">已委托</span>
       </template>
       <span slot="action" slot-scope="text, record">
           <!-- <a @click="handleEdit">编辑</a> -->
@@ -154,17 +160,39 @@
           <span class="des-item-data">{{xqxx.orderSn}}</span>
         </li>
         <li class="des-item">
-          <span class="des-item-title">交易时间：</span>
-          <span class="des-item-data">{{ xqxx.createTime }}</span>
+          <span class="des-item-title">方向：</span>
+<!--          <span class="des-item-data">{{ xqxx.direction }}</span>-->
+          <span class="des-item-data" v-if="xqxx.direction  == 'BULL'">买涨</span>
+          <span class="des-item-data" v-if="xqxx.direction  == 'BEAR'">买跌</span>
         </li>
         <li class="des-item">
-          <span class="des-item-title">逐仓/全仓：</span>
-          <span class="des-item-data">{{ xqxx.depotType }}</span>
+          <span class="des-item-title">杠杆倍数：</span>
+          <span class="des-item-data">{{ xqxx.lever }}</span>
+        </li>
+        <li class="des-item">
+          <span class="des-item-title">初始保证金：</span>
+          <span class="des-item-data">{{ xqxx.leftMargin }}</span>
         </li>
         <li class="des-item">
           <span class="des-item-title">开仓价格(USDT)：</span>
-          <span class="des-item-data">{{ xqxx.openDepotPrice }}</span>
+          <span class="des-item-data">{{ xqxx.openPrice }}</span>
         </li>
+
+        <li class="des-item">
+          <span class="des-item-title">委托价：</span>
+          <span class="des-item-data">{{ xqxx.orderPrice }}</span>
+        </li>
+
+        <li class="des-item">
+          <span class="des-item-title">止盈价：</span>
+          <span class="des-item-data">{{ xqxx.profitPrice }}</span>
+        </li>
+
+        <li class="des-item">
+          <span class="des-item-title">止损价：</span>
+          <span class="des-item-data">{{ xqxx.lossPrice }}</span>
+        </li>
+
         <li class="des-item">
           <span class="des-item-title">合约品种：</span>
           <span class="des-item-data">{{ xqxx.displayName }}</span>
@@ -185,6 +213,12 @@ import { getAction } from '@/api/manage'
 //表头
 const columns = [
   {
+    title: '委托订单号',
+    dataIndex: 'orderSn',
+    key: 'orderSn',
+    // width: 100,
+  },
+  {
     title: '下级账号',
     dataIndex: 'phoneNo',
     key: 'phoneNo',
@@ -195,6 +229,13 @@ const columns = [
     dataIndex: 'name',
     key: 'name',
     // width: 100,
+  },
+  {
+    align: 'center',
+    title: '类型',
+    dataIndex: 'userId',
+    key: 'userId',
+    scopedSlots: { customRender: 'userId' },
   },
   {
     align: 'center',
@@ -213,12 +254,18 @@ const columns = [
   },
   {
     align: 'center',
-    title: '逐仓/全仓',
-    dataIndex: 'depotType',
-    key: 'depotType',
-    scopedSlots: { customRender: 'depotType' },
-
+    title: '合约数量',
+    dataIndex: 'amount',
+    key: 'amount'
   },
+  // {
+  //   align: 'center',
+  //   title: '逐仓/全仓',
+  //   dataIndex: 'depotType',
+  //   key: 'depotType',
+  //   scopedSlots: { customRender: 'depotType' },
+  //
+  // },
   {
     align: 'center',
     title: '杠杆倍数',
@@ -239,16 +286,30 @@ const columns = [
   // },
   {
     align: 'center',
-    title: '仓位保证金',
-    dataIndex: 'tradeStatus',
-    key: 'tradeStatus',
+    title: '初始保证金',
+    dataIndex: 'initMargin',
+    key: 'initMargin',
+
+  },
+  {
+    align: 'center',
+    title: '开仓手续费',
+    dataIndex: 'openCommissionFee',
+    key: 'openCommissionFee',
 
   },
   {
     align: 'center',
     title: '开仓价格(持仓均价)',
-    dataIndex: 'openDepotPrice',
-    key: 'openDepotPrice',
+    dataIndex: 'openPrice',
+    key: 'openPrice',
+
+  },
+  {
+    align: 'center',
+    title: '委托价',
+    dataIndex: 'orderPrice',
+    key: 'orderPrice',
 
   },
   // {
@@ -266,15 +327,15 @@ const columns = [
   {
     align: 'center',
     title: '止盈价',
-    dataIndex: 'takeProfitPrice',
-    key: 'takeProfitPrice',
+    dataIndex: 'profitPrice',
+    key: 'profitPrice',
 
   },
   {
     align: 'center',
     title: '止损价',
-    dataIndex: 'stopLossPrice',
-    key: 'stopLossPrice',
+    dataIndex: 'lossPrice',
+    key: 'lossPrice',
 
   },
   {
@@ -284,13 +345,14 @@ const columns = [
     key: 'createdDate',
 
   },
-  {
-    align: 'center',
-    title: '委托状态',
-    dataIndex: 'orderStatus',
-    key: 'orderStatus',
-
-  },
+  // {
+  //   align: 'center',
+  //   title: '委托状态',
+  //   dataIndex: 'orderStatus',
+  //   key: 'orderStatus',
+  //   scopedSlots: { customRender: 'orderStatus' },
+  //
+  // },
   {
     align: 'center',
     title: '操作',
@@ -317,7 +379,19 @@ export default {
       loading: false,
       pageQuery: {
         pageNo: 1,
-        pageSize: 10
+        pageSize: 99999
+      },
+      ipagination:{
+        current: 1,
+        pageSize: 20,
+        pageSizeOptions: ['10', '20', '30'],
+        showTotal: (total, range) => {
+          return range[0] + "-" + range[1] + " 共" + total + "条"
+        },
+        showQuickJumper: true,
+        showSizeChanger: true,
+        total: 0,
+
       },
     }
   },
@@ -327,6 +401,15 @@ export default {
 
   },
   methods: {
+    handleTableChange(pagination, filters, sorter){
+      //TODO 筛选
+      if (Object.keys(sorter).length>0){
+        this.isorter.column = sorter.field;
+        this.isorter.order = "ascend"==sorter.order?"asc":"desc"
+      }
+      this.ipagination = pagination;
+      this.loadData();
+    },
     xq(e){
       this.xqxx = e
       this.visible = true

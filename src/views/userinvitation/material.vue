@@ -74,13 +74,22 @@
         </div>
 
       </div>
-      
+
       <!-- 列表展示区域 -->
       <div class="list-warp">
         <div class="list-item">
-          <div class="item-left">
-            <img style="height: 100%;" src="../../assets/icon/CodeImg2.svg" alt="">
+          <!-- 二维码 -->
+          <!-- 海报html元素 -->
+          <div id="posterHtml" class="posterBox" :style="{backgroundImage: 'url(' + bgImgURL + ')' }">
+            <div class="posterContent">
+              {{contentData}}
+            </div>
+            <!-- 二维码 -->
+            <div class="qrcodeBox">
+              <div id="qrcodeImg"></div>
+            </div>
           </div>
+          <img v-if="posterImgURL" class="posterBox" :src="posterImgURL" >
           <div class="item-right">
             <ul class="content">
               <li>
@@ -97,16 +106,23 @@
               </li>
               <li>
                 <span class="title">图片尺寸：</span>
-                <span class="data">24554*1111 <a class="main-color" style="color: #49B1B3;"><a-icon type="arrow-down" /> 下载</a></span>
+                <span class="data">24554*1111 <a class="main-color" style="color: #49B1B3;" @click="downloadPoster(posterImgURL,'海报名称')"><a-icon type="arrow-down"  /> 下载</a></span>
               </li>
             </ul>
-            <div class="img-btn">查看大图</div>
+            <div class="img-btn" @click="createPoster">查看大图</div>
           </div>
-          
+
         </div>
         <div class="list-item">
-          <div class="item-left">
-            <img style="height: 100%;" src="../../assets/icon/CodeImg2.svg" alt="">
+          <!-- 海报html元素 -->
+          <div id="posterHtmls" class="posterBox" :style="{backgroundImage: 'url(' + bgImgURL + ')' }">
+            <div class="posterContent">
+              {{contentData}}
+            </div>
+            <!-- 二维码 -->
+            <div class="qrcodeBox">
+              <div id="qrcodeImgs"></div>
+            </div>
           </div>
           <div class="item-right">
             <ul class="content">
@@ -129,7 +145,7 @@
             </ul>
             <div class="img-btn">查看大图</div>
           </div>
-          
+
         </div>
       </div>
 
@@ -147,23 +163,72 @@ const allTag = [
   { text: '近三个月', value: 3 },
   { text: '近半年', value: 4 }
 ]
-
+import QRCode from 'qrcodejs2'
+import html2canvas from 'html2canvas'
 import TagBg01 from '../../assets/icon/tag-bg-01.svg'
-
+import bgImgURL from '../../assets/nodata.png'
 export default {
   data(){
     return {
       allTag,
       TagBg01,
-      selectTag: 1
+      selectTag: 1,
+      bgImgURL: bgImgURL,
+      contentData: '我是一张分享海报', // 文案内容
+      posterImgURL: '', // 最终生成的海报图片URL
     }
   },
-
+  mounted() {
+    this.$nextTick(
+      () => {
+        this.createQrcode("https://www.baidu.com/")
+      }
+    )
+  },
   methods: {
     changeTag(item){
       this.selectTag = item.value
-    }
-  }
+    },
+    // 生成二维码
+    createQrcode(text) {
+      let qrcodeImgEl = document.getElementById('qrcodeImg')
+      qrcodeImgEl.innerHTML = ''
+      let qrcode = new QRCode(qrcodeImgEl, {
+        width: 100,
+        height: 100,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      })
+      qrcode.makeCode(text)
+      this.createPoster()
+    },
+    // 生成海报
+    createPoster() {
+      let that = this
+      let posterDOM = document.getElementById('posterHtml')
+      html2canvas(posterDOM, {
+        width: posterDOM.offsetWidth,
+        height: posterDOM.offsetHeight,
+        //按比例增加分辨率
+        scale: window.devicePixelRatio, // 设备像素比
+        useCORS: true,//（图片跨域相关）
+        allowTaint: true,//允许跨域（图片跨域相关）
+        logging: false,
+        letterRendering: true,
+      }).then(function (canvas) {
+        that.posterImgURL = canvas.toDataURL('image/png')
+      })
+    },
+    // 下载海报
+    downloadPoster(url, fileName) {
+      let a = document.createElement('a')
+      a.setAttribute('download', '海报下载-' + new Date().getTime())
+      a.href = url
+      a.click()
+    },
+  },
+
 }
 
 </script>
@@ -235,7 +300,7 @@ export default {
       }
     }
   }
-  
+
 }
 
 </style>

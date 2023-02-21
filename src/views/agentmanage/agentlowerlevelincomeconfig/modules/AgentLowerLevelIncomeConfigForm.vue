@@ -39,8 +39,8 @@
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
-            <a-form-model-item label="手续费（0：手续费，1：打包费，2：手续费+打包费）" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="type">
-              <a-input-number v-model="model.type" placeholder="请输入手续费（0：手续费，1：打包费，2：手续费+打包费）" style="width: 100%" />
+            <a-form-model-item label="手续费（0：手续费，1：盈亏，2：手续费+盈亏）" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="type">
+              <a-input-number v-model="model.type" placeholder="请输入手续费（0：手续费，1：盈亏，2：手续费+盈亏）" style="width: 100%" />
             </a-form-model-item>
           </a-col>
         </a-row>
@@ -131,7 +131,7 @@
               that.confirmLoading = false;
             })
           }
-         
+
         })
       },
     }
