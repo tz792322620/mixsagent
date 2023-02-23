@@ -115,10 +115,10 @@
           :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
           @change="handleTableChange"
         >
-          <template slot="type" slot-scope="type">
-            <div :key="type">
-              <span v-if="type == 0">普通用户</span>
-              <span v-if="type == 1">代理商</span>
+          <template slot="type" slot-scope="text, record">
+            <div :key="record.type">
+              <span v-if="record.type == 0">普通用户</span>
+              <span v-if="record.type == 1">{{record.level}}级代理</span>
             </div>
           </template>
           <template slot="loginIs" slot-scope="loginIs">
@@ -193,7 +193,7 @@
       <agent-user-modal ref="modalForm" @ok="modalFormOk" />
 
       <!-- 设置代理 -->
-      <a-modal v-model="visible" title="设为代理" centered @ok="() => (visible = false)" :footer="null">
+      <a-modal v-model="visible" title="设为代理" centered  :footer="null">
         <a-form :form="agentsForm" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
           <a-form-item label="代理等级">
             <a-select style="width: 100%" v-model:value="agentsForm.level" placeholder="请选择代理等级">
@@ -227,6 +227,8 @@
             <a-select style="width: 100%" v-model:value="agentsForm.tradeType" placeholder="请选择结算类型（D/T）">
               <a-select-option value="0">D(工作日+节假日)</a-select-option>
               <a-select-option value="1">T(工作日)</a-select-option>
+<!--              <a-select-option value="2">W(周)</a-select-option>-->
+<!--              <a-select-option value="3">M(月)</a-select-option>-->
             </a-select>
           </a-form-item>
 
@@ -392,13 +394,13 @@ export default {
           key: 'type',
           scopedSlots: { customRender: 'type' }
         },
-        {
-          title: '代理等级',
-          align: 'center',
-          dataIndex: 'level',
-          key: 'level',
-          scopedSlots: { customRender: 'level' }
-        },
+        // {
+        //   title: '代理等级',
+        //   align: 'center',
+        //   dataIndex: 'level',
+        //   key: 'level',
+        //   scopedSlots: { customRender: 'level' }
+        // },
         {
           title: '是否允许登录',
           align: 'center',
@@ -522,10 +524,21 @@ export default {
       httpAction(httpurl, dd, method).then(res => {
         if (res.success) {
           console.log(res)
+          console.log('提示')
+          this.visible = false
+          this.$notification.success({
+            message: '提示',
+            description: res.message,
+          });
         } else {
+          this.visible = false
+          this.$notification.success({
+            message: '提示',
+            description: res.message,
+          });
         }
       })
-      this.visible = false
+
     },
     daili(record) {
       this.visible = true
@@ -537,6 +550,7 @@ export default {
         .then(res => {
           console.log('禁止交易', res)
           if (res.success) {
+            this.handleRefe()
             this.$notification.success({
               message: '提示',
               description: res.message,
@@ -691,6 +705,19 @@ export default {
         .then(res => {
           console.log('设置代理', res)
           if (res.success) {
+            this.visible = false
+            this.handleRefe()
+            this.$notification.success({
+              message: '提示',
+              description: res.message,
+            });
+          }else {
+            this.visible = false
+            this.handleRefe()
+            this.$notification.success({
+              message: '提示',
+              description: res.message,
+            });
           }
         })
         .catch(err => {

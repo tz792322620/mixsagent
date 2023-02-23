@@ -56,23 +56,23 @@
                 <a-card title="直接用户" style="width: 45%">
                   <a slot="extra" href="#">{{agentUserInfo.userNumber}}</a>
                   <div style="display: flex;justify-content: space-between;">
-                    <div>总盈亏:{{ userFinanceDetail.childSettledProfit }}</div>
+                    <div>总盈亏:{{ userFinanceDetail.userProfit }}</div>
                     <div>未实现盈亏:{{ userFinanceDetail.childSettledProfit }}</div>
                   </div>
                   <div style="display: flex;justify-content: space-between;margin-top: 10px;">
-                    <div>现持仓:{{ userFinanceDetail.childHolding }}</div>
-                    <div>总手续费:{{ userFinanceDetail.childCommission }}</div>
+                    <div>现持仓:{{ userFinanceDetail.userHolding }}</div>
+                    <div>总手续费:{{ userFinanceDetail.userCharge }}</div>
                   </div>
                 </a-card>
                 <a-card title="下级代理的用户" style="width: 45%">
-                  <a slot="extra" href="#">二级{{ agentIncomeDetail.secondLevel·· }}个 三级{{ agentIncomeDetail.thirdLevel }}个</a>
+                  <a slot="extra" href="#">二级{{ agentIncomeDetail.secondLevel }}个 三级{{ agentIncomeDetail.thirdLevel }}个</a>
                   <div style="display: flex;justify-content: space-between;">
-                    <div>总盈亏:{{ agentUserIncomeDetail.childSettledProfit }}</div>
+                    <div>总盈亏:{{ agentUserIncomeDetail.userProfit }}</div>
                     <div>未实现盈亏:{{ agentUserIncomeDetail.childSettledProfit }}</div>
                   </div>
                   <div style="display: flex;justify-content: space-between;margin-top: 10px;">
-                    <div>现持仓:{{ agentUserIncomeDetail.childHolding }}</div>
-                    <div>总手续费:{{ agentUserIncomeDetail.childCommission }}</div>
+                    <div>现持仓:{{ agentUserIncomeDetail.userHolding }}</div>
+                    <div>总手续费:{{ agentUserIncomeDetail.userCharge }}</div>
                   </div>
                 </a-card>
               </div>

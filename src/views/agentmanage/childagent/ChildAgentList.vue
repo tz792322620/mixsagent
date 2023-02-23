@@ -215,11 +215,11 @@ export default {
           dataIndex: 'name',
         },
 
-        {
-          title: '密码',
-          align: 'center',
-          dataIndex: 'password',
-        },
+        // {
+        //   title: '密码',
+        //   align: 'center',
+        //   dataIndex: 'password',
+        // },
         {
           title: '提币地址',
           align: 'center',

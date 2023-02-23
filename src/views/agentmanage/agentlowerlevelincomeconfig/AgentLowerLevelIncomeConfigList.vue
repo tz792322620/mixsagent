@@ -123,6 +123,15 @@
           </div>
         </template>
 
+
+        <template slot="settlementCycle" slot-scope="settlementCycle">
+          <div :key="settlementCycle">
+            <span v-if="settlementCycle == 0">日结</span>
+            <span v-if="settlementCycle == 1">周结</span>
+            <span v-if="settlementCycle == 2">月结</span>
+          </div>
+        </template>
+
         <template slot="isOpen" slot-scope="isOpen">
           <div :key="isOpen">
             <span v-if="isOpen == 0">否</span>
@@ -150,19 +159,7 @@
     <!-- 新增弹窗 -->
     <a-modal v-model="addModel" :title="modelTitle" centered @ok="() => (addModel = false)" :footer="null">
       <a-form :form="addForm" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
-<!--        <a-form-item label="平台类型:">-->
-<!--          <a-select   v-model:value="addForm.platformType" placeholder="请选择平台类型">-->
-<!--            <a-select-option value="0">币币</a-select-option>-->
-<!--            <a-select-option value="1">合约</a-select-option>-->
-<!--            <a-select-option value="2">法币</a-select-option>-->
-<!--          </a-select>-->
-<!--        </a-form-item>-->
-        <a-form-item label="结算周期:">
-          <a-input
-            v-model:value="addForm.settlementCycle"
-            placeholder="请输入结算周期"
-          />
-        </a-form-item>
+
         <a-form-item label="结算周期类型:" style="display: flex;">
           <a-select
             placeholder="请选择结算周期类型"
@@ -171,9 +168,21 @@
           >
             <a-select-option value="0">D(工作日+节假日)</a-select-option>
             <a-select-option value="1">T(工作日)</a-select-option>
+<!--            <a-select-option value="2">W(周)</a-select-option>-->
+<!--            <a-select-option value="3">M(月)</a-select-option>-->
           </a-select>
         </a-form-item>
-
+        <a-form-item label="结算时间:">
+          <a-select
+            placeholder="请选择结算时间"
+            style="width: 40%;"
+            v-model:value="addForm.settlementCycle"
+          >
+          <a-select-option value="0" >日结</a-select-option>
+          <a-select-option value="1" >周结</a-select-option>
+          <a-select-option value="2" >月结</a-select-option>
+          </a-select>
+        </a-form-item>
 
         <a-form-item label="是否开启收益:" style="display: flex;">
           <a-select style="width: 40%;"    v-model:value="addForm.isOpen" placeholder="请选择是否开启收益">
@@ -213,18 +222,23 @@
           <span v-if="detailsForm.platformType == 2">法币</span>
         </a-form-item>
         <a-form-item label="结算周期类型:">
-          <span v-if="detailsForm.tradeType == 0">D(工作日+节假日)</span>
-          <span v-if="detailsForm.tradeType == 1">T(工作日)</span>
+          <span style="width: 50%;" v-if="detailsForm.tradeType == 0">D(工作日+节假日)</span>
+          <span style="width: 50%;" v-if="detailsForm.tradeType == 1">T(工作日)</span>
+<!--          <span style="width: 50%;" v-if="detailsForm.tradeType == 2">W(周)</span>-->
+<!--          <span style="width: 50%;" v-if="detailsForm.tradeType == 3">M(月)</span>-->
 <!--          <a-input class="detail-input-border" v-model="detailsForm.tradeType" default-value="" :disabled="true" />-->
         </a-form-item>
 
-        <a-form-item label="结算周期:">
-          <span >{{detailsForm.settlementCycle}}</span>
+        <a-form-item label="结算时间:">
+          <span style="width: 50%;" v-if="detailsForm.settlementCycle == 0">日结</span>
+          <span style="width: 50%;" v-if="detailsForm.settlementCycle == 1">周结</span>
+          <span style="width: 50%;" v-if="detailsForm.settlementCycle == 2">月结</span>
+<!--          <span >{{detailsForm.settlementCycle}}</span>-->
 <!--          <a-input class="detail-input-border" v-model="detailsForm.settlementCycle" default-value="0" :disabled="true" />-->
         </a-form-item>
         <a-form-item label="是否开启收益:">
-          <span v-if="detailsForm.isOpen == 0">否</span>
-          <span v-if="detailsForm.isOpen == 1">是</span>
+          <span style="width: 50%;" v-if="detailsForm.isOpen == 0">否</span>
+          <span style="width: 50%;" v-if="detailsForm.isOpen == 1">是</span>
 <!--          <a-input class="detail-input-border" v-model="detailsForm.isOpen" default-value="是" :disabled="true" />-->
         </a-form-item>
         <a-form-item label="费率:">

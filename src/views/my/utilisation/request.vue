@@ -262,11 +262,11 @@
           <span class="des-item-data" v-if="detailsForm.status == 7">拒绝</span>
         </li>
         <li class="des-item">
-          <span class="des-item-title">提款时间：</span>
+          <span class="des-item-title">发起时间：</span>
           <span class="des-item-data">{{ detailsForm.createTime }} </span>
         </li>
         <li class="des-item">
-          <span class="des-item-title">到账时间：</span>
+          <span class="des-item-title">结束时间：</span>
           <span class="des-item-data">{{ detailsForm.updateTime }} </span>
         </li>
       </ul>
@@ -332,13 +332,13 @@ const columns = [
     scopedSlots: { customRender: 'status' }
   },
   {
-    title: '申请时间',
+    title: '发起时间',
     dataIndex: 'createTime',
     key: 'createTime',
 
   },
   {
-    title: '到账时间',
+    title: '结束时间',
     dataIndex: 'updateTime',
     key: 'updateTime',
 
@@ -515,16 +515,11 @@ export default {
     changehide() {
       console.log("点击");
       console.log(this.userInfo().mail);
-      // this.$confirm({
-      //   title: '输入支付密码查看',
-      //   content: '',
-      //   okText: '确认',
-      //   cancelText: '取消',
-      //   centered: 'true'
-      // });
-      this.pasVisible = true;
-
-      // this.isHide = !this.isHide;
+      if (!this.isHide){
+        this.pasVisible = true;
+      }else {
+        this.isHide = false;
+      }
 
     },
     //验证输入密码

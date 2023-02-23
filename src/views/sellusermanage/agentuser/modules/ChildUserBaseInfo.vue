@@ -80,7 +80,7 @@ export default {
         { text: '会员状态', value: 'status' },
         { text: '会员名称', value: 'userName' },
         { text: '用户ID', value: 'id' },
-        { text: '真实姓名', value: 'surname' },
+        { text: '真实姓名', value: 'name' },
         { text: '会员手机号', value: 'phoneNo' },
         { text: '身份证号', value: 'cardNum' },
         { text: '邮箱', value: 'mail' },

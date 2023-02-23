@@ -91,7 +91,7 @@
           </div>
           <div class="text-center" style="margin-top: 40px; padding-bottom: 20px; height: 110px;font-size: 3rem;">
             <!-- <indexCommissionLine></indexCommissionLine> -->
-            {{yjbls}}%
+            {{yjbls*100}}%
           </div>
         </div>
       </a-col>
