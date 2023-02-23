@@ -57,7 +57,7 @@
 <!--                </a-form-item>-->
 <!--              </div>-->
 <!--            </div>-->
-            <div class="px-6"></div>
+<!--            <div class="px-6"></div>-->
             <div class="d-flex">
               <div class="d-flex align-center">
                 <a-form-item label="永续/超级:">
@@ -531,6 +531,7 @@ export default {
   color: #333333;
   .des-item{
     display: flex;
+    width: 100%;
     .des-item-title{
       width: 40%;
       display: block;

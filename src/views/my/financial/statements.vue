@@ -6,72 +6,73 @@
         <div class="font-size-30 font-bold">财务报表</div>
         <div class="btn" @click="getPageData()"><a-icon type="redo"  />刷新</div>
       </div>
-<!--      <ul style="height: 100px;">-->
-<!--        <li v-for="item in baseInfoList" :key="item.value" class="py-4 base-info-box">-->
+      <ul style="height: 100px;">
+        <li v-for="item in baseInfoList" :key="item.value" class="py-4 base-info-box">
 
-<!--          <div>-->
-<!--            <span class="base-info-desc" >{{item.text}}</span> :&nbsp;<span class="base-info-data">{{ agentUserInfo[item.value] }}</span>-->
-<!--          </div>-->
+          <div>
+            <span class="base-info-desc" >{{item.text}}</span> :&nbsp;<span class="base-info-data">{{ agentUserInfo[item.value] }}</span>
+          </div>
 
-<!--        </li>-->
-<!--      </ul>-->
+        </li>
+      </ul>
 
 
-<!--      <div class="card" style="margin-top: 30px;">-->
-<!--        <div class="baseInfo-card-title d-flex align-center">-->
-<!--          &nbsp;资产信息-->
-<!--        </div>-->
-<!--        <a-table-->
-<!--          :dataSource="agentUserUserVirtualWallet"-->
-<!--          :columns="virtualWalletColumnss"-->
-<!--          :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)"-->
-<!--          class="ant-table-striped"-->
-<!--          :pagination="false"-->
-<!--          bordered-->
-<!--        />-->
-<!--      </div>-->
+      <div class="card" style="margin-top: 30px;">
+        <div class="baseInfo-card-title d-flex align-center">
+          &nbsp;资产信息
+        </div>
+        <a-table
+          :dataSource="agentUserUserVirtualWallet"
+          :columns="virtualWalletColumnss"
+          :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)"
+          class="ant-table-striped"
+          :pagination="false"
+          bordered
+        />
+      </div>
+
             <div class="card" style="margin-top: 30px;">
               <div class="baseInfo-card-title d-flex align-center">
                 &nbsp;返佣信息
               </div>
               <div style="display: flex;justify-content: space-between;">
                 <a-card title="我的返佣" style="width: 45%">
-                  <a slot="extra" href="#">0</a>
+<!--                  <a slot="extra" href="#">100</a>-->
                   <div style="display: flex;justify-content: space-between;">
-                    <div>已结算:100</div>
-                    <div>未结算:100</div>
+                    <div>已结算:{{ assetsDetail.settled }}</div>
+                    <div>未结算:{{ assetsDetail.settlement }}</div>
                   </div>
                 </a-card>
                 <a-card title="下级代理总返佣" style="width: 45%">
-                  <a slot="extra" href="#">0</a>
+                  <a slot="extra" href="#">二级{{ agentIncomeDetail.secondLevel }}个 三级{{ agentIncomeDetail.thirdLevel }}个</a>
                   <div style="display: flex;justify-content: space-between;">
-                    <div>已结算:100</div>
-                    <div>未结算:100</div>
+                    <div>已结算:{{ agentIncomeDetail.settled }}</div>
+                    <div>未结算:{{ agentIncomeDetail.settlement }}</div>
                   </div>
                 </a-card>
               </div>
 
               <div style="display: flex;justify-content: space-between;margin-top: 20px;">
                 <a-card title="直接用户" style="width: 45%">
-                  <a slot="extra" href="#">0</a>
+                  <a slot="extra" href="#">{{agentUserInfo.userNumber}}</a>
                   <div style="display: flex;justify-content: space-between;">
-                    <div>总盈亏:100</div>
-                    <div>未实现盈亏:100</div>
+                    <div>总盈亏:{{ userFinanceDetail.childSettledProfit }}</div>
+                    <div>未实现盈亏:{{ userFinanceDetail.childSettledProfit }}</div>
                   </div>
                   <div style="display: flex;justify-content: space-between;margin-top: 10px;">
-                    <div>现持仓:100</div>
-                    <div>总手续费:100</div>
+                    <div>现持仓:{{ userFinanceDetail.childHolding }}</div>
+                    <div>总手续费:{{ userFinanceDetail.childCommission }}</div>
                   </div>
                 </a-card>
                 <a-card title="下级代理的用户" style="width: 45%">
-                  <a slot="extra" href="#">0</a>
+                  <a slot="extra" href="#">二级{{ agentIncomeDetail.secondLevel·· }}个 三级{{ agentIncomeDetail.thirdLevel }}个</a>
                   <div style="display: flex;justify-content: space-between;">
-                    <div>总盈亏:100</div>
-                    <div>未实现盈亏:100</div>
+                    <div>总盈亏:{{ agentUserIncomeDetail.childSettledProfit }}</div>
+                    <div>未实现盈亏:{{ agentUserIncomeDetail.childSettledProfit }}</div>
                   </div>
-                  <div style="display: flex;justify-content: space-between; margin-top: 10px;">
-                    <div>现持仓:100</div>
-                    <div>总手续费:100</div>
+                  <div style="display: flex;justify-content: space-between;margin-top: 10px;">
+                    <div>现持仓:{{ agentUserIncomeDetail.childHolding }}</div>
+                    <div>总手续费:{{ agentUserIncomeDetail.childCommission }}</div>
                   </div>
                 </a-card>
               </div>
@@ -135,17 +136,53 @@ import { httpAction, getAction } from '@/api/manage'
 export default {
   data(){
     return {
-      subordinateAgentSummary:[],
+      agentUserInfo:{},
+      agentUserUserVirtualWallet:[],
+      fyxx:{},
+      assetsDetail:{},
+      agentIncomeDetail:{},
+      agentUserIncomeDetail:{},
+      userFinanceDetail:{},
+      virtualWalletColumnss: [
+        {
+          title: '币种',
+          dataIndex: 'virtualCoinName',
+          key: 'virtualCoinName',
+        },
+        {
+          title: '可用',
+          dataIndex: 'afterBalance',
+          key: 'afterBalance',
+        },
+        {
+          title: '冻结',
+          dataIndex: 'afterFreeze',
+          key: 'afterFreeze',
+        },
+        {
+          title: '历史总返佣',
+          dataIndex: 'settled',
+          key: 'settled',
+        },
+        {
+          title: '本期待结算',
+          dataIndex: 'settlement',
+          key: 'settlement',
+        },
+        // {
+        //   title: '总待结算',
+        //   dataIndex: 'settlement',
+        //   key: 'settlement',
+        // }
+      ],
       baseInfoList: [
         // { text: '代理商账户', value: 'phone' },
-        { text: '提币地址', value: 'address' },
-        { text: '用户ID', value: 'id' },
-        { text: '真实姓名', value: 'name' },
-        { text: '手机号', value: 'phone' },
+        { text: '商务UID', value: 'id' },
+        { text: '团队总人数', value: 'agentCount' },
+        { text: '点差返佣比例', value: 'incomes' },
+        { text: '手机', value: 'phone' },
         { text: '邮箱', value: 'email' },
-        { text: '注册时间', value: 'createTime' },
-        { text: '最近登陆时间', value: 'lastLoginTime' },
-
+        { text: '直推用户总人数', value: 'userNumber' },
       ],
       modal2Visible: false,
       columns,
@@ -182,6 +219,13 @@ export default {
         console.log("数据",res);
         if(res.success) {
           this.form = res.result;
+          this.agentUserInfo =res.result;
+          console.log(this.agentUserInfo);
+          this.agentUserUserVirtualWallet[0]=res.result.assetsDetail;
+          this.assetsDetail = res.result.assetsDetail;
+          this.agentIncomeDetail = res.result.agentIncomeDetail;
+          this.agentUserIncomeDetail = res.result.agentUserIncomeDetail;
+          this.userFinanceDetail = res.result.userFinanceDetail;
         }
       }).catch(err =>{
         console.log(err);
@@ -202,6 +246,9 @@ export default {
 </script>
 
 <style lang="less">
+.ant-card-head {
+  background: #e5e5e5;
+}
 a {
   color: #49b1b3;
 }
@@ -209,9 +256,9 @@ li{
   list-style: none;
   padding: 0;
   margin: 6px 0;
-  float: left;
+  //float: left;
   display: block;
-  width: 25%;
+  //width: 100%;
 }
 
 .card {
@@ -238,11 +285,13 @@ li{
 
 .base-info-box {
   font-size: 16px;
+  float: left;
+  width: 25%;
 }
 .ant-col-6 {
   display: block;
   box-sizing: border-box;
-  width: 100%;
+  //width: 100%;
 }
 
 /*.base-info-box .base-info-desc {*/
@@ -299,5 +348,8 @@ li{
 }
 /deep/.a {
   color: #49b1b3;
+}
+/deep/.ant-card-head {
+  background: #e5e5e5;
 }
 </style>

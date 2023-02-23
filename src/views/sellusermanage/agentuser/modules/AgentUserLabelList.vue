@@ -15,7 +15,7 @@
             <a-button  class="main-color handle-btn" shape="round" @click="handleAdd" icon="plus-circle">新增标签</a-button>
             <!-- <a-icon type="plus-circle" /> -->
         </div>
-        
+
         <!-- 表格展示 -->
         <div>
             <a-table
@@ -33,7 +33,7 @@
                 <a-button type="primary" icon="download" />
             </a-table>
         </div>
-        
+
         <!-- 标签编辑弹窗 -->
         <a-modal v-model="labelDialog" :title="labelTitle" centered @ok="() => (labelDialog = false)" :footer="null">
             <a-form :form="labelForm" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
@@ -84,7 +84,7 @@ const data = [
   {
     name: "标签",
     num: '123'
-  }, 
+  },
 ]
 export default {
   name: '',
@@ -95,7 +95,7 @@ export default {
     //   required: true
     }
   },
-  
+
   data () {
     return {
       loading: true,
@@ -109,7 +109,7 @@ export default {
   },
   watch: {},
   created () {
-    
+
   },
   mounted() {
     this.loading = false;
@@ -170,6 +170,8 @@ export default {
 
 .base-info-box {
   font-size: 16px;
+  float: left;
+  width: 25%;
 }
 
 /*.base-info-box .base-info-desc {*/

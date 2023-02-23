@@ -163,7 +163,7 @@
             placeholder="请输入结算周期"
           />
         </a-form-item>
-        <a-form-item label="结算周期类型:">
+        <a-form-item label="结算周期类型:" style="display: flex;">
           <a-select
             placeholder="请选择结算周期类型"
             style="width: 40%;"
@@ -175,7 +175,7 @@
         </a-form-item>
 
 
-        <a-form-item label="是否开启收益:">
+        <a-form-item label="是否开启收益:" style="display: flex;">
           <a-select style="width: 40%;"    v-model:value="addForm.isOpen" placeholder="请选择是否开启收益">
             <a-select-option value="0">否</a-select-option>
             <a-select-option value="1">是</a-select-option>

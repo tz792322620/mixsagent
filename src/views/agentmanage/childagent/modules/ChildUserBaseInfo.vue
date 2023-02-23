@@ -252,7 +252,7 @@ li{
   list-style: none;
   padding: 0;
   margin: 6px 0;
-  float: left;
+  /*float: left;*/
   display: block;
   width: 25%;
 }
@@ -281,6 +281,8 @@ li{
 
 .base-info-box {
   font-size: 16px;
+  float: left;
+  width: 25%;
 }
 .ant-col-6 {
     display: block;

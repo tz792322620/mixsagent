@@ -517,6 +517,7 @@ export default {
   color: #333333;
   .des-item{
     display: flex;
+    width: 100%;
     .des-item-title{
       width: 40%;
       display: block;

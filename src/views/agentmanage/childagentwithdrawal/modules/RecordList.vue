@@ -223,6 +223,8 @@ export default {
 
 .base-info-box {
   font-size: 16px;
+  float: left;
+  width: 25%;
 }
 
 /*.base-info-box .base-info-desc {*/
